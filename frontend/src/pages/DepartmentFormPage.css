@@ -1,0 +1,110 @@
+.department-form-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.dept-form-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 28px;
+}
+
+.dept-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dept-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dept-form-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.dept-form-field input,
+.dept-form-field textarea,
+.dept-form-field select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.dept-form-field input:focus,
+.dept-form-field textarea:focus,
+.dept-form-field select:focus {
+  border-color: var(--color-primary);
+}
+
+.dept-form-field input::placeholder,
+.dept-form-field textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dept-form-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.dept-form-field select {
+  cursor: pointer;
+}
+
+.dept-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dept-form-cancel {
+  padding: 10px 24px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dept-form-cancel:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.dept-form-submit {
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.dept-form-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.dept-form-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

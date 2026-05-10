@@ -1,0 +1,158 @@
+.department-manage-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.dept-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+}
+
+.dept-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.dept-subtitle {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.dept-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.dept-create-btn:hover {
+  opacity: 0.9;
+}
+
+.dept-create-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dept-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-tertiary);
+  font-size: 15px;
+}
+
+.dept-empty p {
+  margin: 0 0 16px;
+}
+
+.dept-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dept-tree-node {
+  position: relative;
+}
+
+.dept-tree-children {
+  margin-top: 6px;
+  padding-left: 20px;
+  border-left: 2px solid var(--border-color);
+}
+
+.dept-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s;
+}
+
+.dept-card:hover {
+  border-color: var(--color-primary);
+}
+
+.dept-card-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.dept-card-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.dept-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dept-card-desc {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
+}
+
+.dept-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dept-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.dept-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dept-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.dept-action-delete:hover {
+  color: #ef4444;
+  background: #ef444418;
+}

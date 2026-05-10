@@ -1,0 +1,150 @@
+.profile-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.profile-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 24px;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+}
+
+.profile-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-label {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  min-width: 60px;
+}
+
+.profile-value {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.profile-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.profile-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 18px;
+}
+
+.profile-msg {
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-success)14;
+  color: var(--color-success);
+  font-size: 13px;
+}
+
+.profile-error {
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-danger)14;
+  color: var(--color-danger);
+  font-size: 13px;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-form-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.profile-form-field input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.profile-form-field input:focus {
+  border-color: var(--color-primary);
+}
+
+.profile-form-field input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.profile-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.profile-form-row .profile-form-field {
+  flex: 1;
+}
+
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.profile-form-submit {
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.profile-form-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.profile-form-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

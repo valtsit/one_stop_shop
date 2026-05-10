@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build output
+frontend/dist/
+
+# Environment variables
+backend/.env
+
+# Runtime data (数据库、上传文件、会话记录等)
+backend/data/app.db
+backend/data/uploads/
+backend/data/conversations/
+
+# IDE
+.vscode/
+.idea/
+*.sw?
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Python
+*.egg-info/
+.venv/
+venv/
