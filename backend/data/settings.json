@@ -1,0 +1,61 @@
+{
+  "providers": {
+    "openai": {
+      "api_key": "1123",
+      "base_url": "https://api.openai.com/v1",
+      "enabled": false
+    },
+    "claude": {
+      "api_key": "1",
+      "base_url": "https://api.anthropic.com",
+      "enabled": false
+    },
+    "gemini": {
+      "api_key": "1",
+      "base_url": "",
+      "enabled": false
+    },
+    "deepseek": {
+      "api_key": "tp-cuvw151ehqw4vjabmtm6099paie6go6fb4s2jkh2jv9902o0",
+      "base_url": "https://token-plan-cn.xiaomimimo.com/anthropic",
+      "enabled": false
+    }
+  },
+  "default_provider": "openai",
+  "default_model": "mimo-v2-pro",
+  "temperature": 0.7,
+  "max_tokens": 4096,
+  "custom_models": [
+    {
+      "id": "5cb2174c",
+      "provider": "openai",
+      "model": "mimo-v2-pro",
+      "label": "mimo-v2-pro",
+      "base_url": "https://token-plan-cn.xiaomimimo.com/v1",
+      "api_key": "tp-c4dlecknybvvjqb3ythoit1dg7kepo1w71cyhoik108i68is",
+      "max_tokens": 999999999
+    },
+    {
+      "id": "85268ce4",
+      "provider": "openai",
+      "model": "deepseek-v4-pro",
+      "label": "deepseek-v4-pro",
+      "base_url": "https://api.deepseek.com",
+      "api_key": "sk-1cdb33534926422d9907281ff3a96e06",
+      "max_tokens": 9999999
+    },
+    {
+      "id": "0113f50f",
+      "provider": "claude",
+      "model": "kimi-for-coding",
+      "label": "kimi2.6",
+      "base_url": "https://api.kimi.com/coding",
+      "api_key": "sk-kimi-bY6JC88giJ6WV1cUrwXQiqR6Woj6JH7oi1huq6rBfJiKPQeDHzbaSGaqj3VWIWnm",
+      "max_tokens": 9999999,
+      "headers": {
+        "User-Agent": "claude-code/1.0"
+      }
+    }
+  ],
+  "memory_dir": "./data/conversations"
+}

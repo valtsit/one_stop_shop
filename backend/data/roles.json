@@ -1,0 +1,65 @@
+{
+  "role_super_admin": {
+    "id": "role_super_admin",
+    "name": "超级管理员",
+    "description": "拥有所有权限",
+    "permissions": [
+      "*"
+    ],
+    "created_at": "2026-05-01T00:00:00",
+    "updated_at": "2026-05-16T17:15:19.687716"
+  },
+  "role_admin": {
+    "id": "role_admin",
+    "name": "管理员",
+    "description": "拥有大部分管理权限",
+    "permissions": [
+      "department:create",
+      "department:read",
+      "department:update",
+      "department:delete",
+      "user:read",
+      "user:create",
+      "user:update",
+      "user:delete",
+      "agent:create",
+      "agent:read",
+      "agent:update",
+      "agent:delete",
+      "skill:create",
+      "skill:read",
+      "skill:update",
+      "skill:delete",
+      "knowledge:create",
+      "knowledge:read",
+      "knowledge:update",
+      "knowledge:delete",
+      "knowledge:review",
+      "role:read",
+      "role:create",
+      "role:update",
+      "role:delete",
+      "settings:read",
+      "settings:update",
+      "conversation:read",
+      "conversation:delete",
+      "password:change",
+      "user:manage"
+    ],
+    "created_at": "2026-05-01T00:00:00",
+    "updated_at": "2026-05-16T17:15:10.580471"
+  },
+  "role_user": {
+    "id": "role_user",
+    "name": "普通用户",
+    "description": "仅可查看",
+    "permissions": [
+      "agent:read",
+      "knowledge:read",
+      "knowledge:create",
+      "settings:read"
+    ],
+    "created_at": "2026-05-01T00:00:00",
+    "updated_at": "2026-05-16T17:15:12.978190"
+  }
+}
