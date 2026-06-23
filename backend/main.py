@@ -61,9 +61,8 @@ app.include_router(wiki_api.router)
 @app.on_event("startup")
 async def startup():
     await init_db()
-    migrated = await run_migration()
-    if not migrated:
-        await ensure_seed_data()
+    await run_migration()
+    await ensure_seed_data()
 
 
 @app.get("/api/health")
