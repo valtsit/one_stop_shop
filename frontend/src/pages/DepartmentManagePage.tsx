@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchDepartments, deleteDepartment, type DepartmentTree } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import './DepartmentManagePage.css';
 
 function DeptTreeNode({
@@ -62,6 +63,7 @@ function DeptTreeNode({
 }
 
 export default function DepartmentManagePage() {
+  const { toast, confirm } = useToast();
   const [departments, setDepartments] = useState<DepartmentTree[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -74,7 +76,7 @@ export default function DepartmentManagePage() {
   }, []);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`确定要删除部门"${name}"吗？子部门将被提升为顶级部门。`)) return;
+    if (!(await confirm(`确定要删除部门"${name}"吗？子部门将被提升为顶级部门。可在回收站中恢复。`))) return;
     try {
       await deleteDepartment(id);
       setDepartments((prev) => {
@@ -85,7 +87,7 @@ export default function DepartmentManagePage() {
         return remove(prev);
       });
     } catch {
-      alert('删除失败');
+      toast('删除失败', 'error');
     }
   };
 

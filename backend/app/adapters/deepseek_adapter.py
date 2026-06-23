@@ -1,8 +1,8 @@
 import json
 import httpx
 from typing import AsyncIterator
-from .base import BaseModelAdapter, estimate_cost
-from ..models.schemas import ChatMessage, TokenUsage
+from .base import BaseModelAdapter, estimate_cost, strip_images_from_messages
+from ..models.schemas import TokenUsage
 
 
 class DeepSeekAdapter(BaseModelAdapter):
@@ -10,22 +10,24 @@ class DeepSeekAdapter(BaseModelAdapter):
 
     async def chat_stream(
         self,
-        messages: list[ChatMessage],
+        api_messages: list[dict],
         model: str,
         api_key: str,
         system_prompt: str | None = None,
         base_url: str | None = None,
-    ) -> AsyncIterator[tuple[str, TokenUsage | None]]:
+        extra_headers: dict[str, str] | None = None,
+    ) -> AsyncIterator[tuple[str, TokenUsage | None, bool]]:
         url = (base_url or self.BASE_URL).rstrip("/")
-        api_messages = []
+        # DeepSeek does not support vision
+        api_messages = strip_images_from_messages(api_messages)
+        messages = []
         if system_prompt:
-            api_messages.append({"role": "system", "content": system_prompt})
-        for msg in messages:
-            api_messages.append({"role": msg.role, "content": msg.content})
+            messages.append({"role": "system", "content": system_prompt})
+        messages.extend(api_messages)
 
         payload = {
             "model": model,
-            "messages": api_messages,
+            "messages": messages,
             "stream": True,
         }
 
@@ -41,10 +43,10 @@ class DeepSeekAdapter(BaseModelAdapter):
             ) as resp:
                 resp.raise_for_status()
                 async for line in resp.aiter_lines():
-                    if not line.startswith("data: "):
+                    if not line.startswith("data:"):
                         continue
-                    data_str = line[6:]
-                    if data_str.strip() == "[DONE]":
+                    data_str = line[5:].strip()
+                    if data_str == "[DONE]":
                         break
                     try:
                         data = json.loads(data_str)
@@ -60,12 +62,15 @@ class DeepSeekAdapter(BaseModelAdapter):
                             completion_tokens=completion_t,
                             total_tokens=prompt_t + completion_t,
                             estimated_cost=estimate_cost(model, prompt_t, completion_t),
-                        ))
+                        ), False)
                         continue
 
                     choices = data.get("choices", [])
                     if choices:
                         delta = choices[0].get("delta", {})
+                        reasoning = delta.get("reasoning_content", "")
+                        if reasoning:
+                            yield (reasoning, None, True)
                         content = delta.get("content", "")
                         if content:
-                            yield (content, None)
+                            yield (content, None, False)

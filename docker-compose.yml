@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # 后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-shop-backend
+    restart: unless-stopped
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/uploads:/app/uploads
+    env_file:
+      - ./backend/.env
+    networks:
+      - ai-shop
+
+  # 前端 + Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: ai-shop-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./backend/uploads:/app/uploads:ro
+    depends_on:
+      - backend
+    networks:
+      - ai-shop
+
+networks:
+  ai-shop:
+    driver: bridge

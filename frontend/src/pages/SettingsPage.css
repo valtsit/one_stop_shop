@@ -11,21 +11,22 @@
 
 .settings-header h1 {
   font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.02em;
   margin-bottom: 6px;
 }
 
 .settings-header p {
   font-size: 14px;
-  color: var(--text-tertiary);
+  color: var(--ink-subtle);
 }
 
 /* Section card */
 .settings-section {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
   padding: 24px;
   margin-bottom: 20px;
 }
@@ -33,33 +34,34 @@
 .settings-section-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
+  letter-spacing: -0.02em;
   margin-bottom: 4px;
 }
 
 .settings-section-desc {
   font-size: 13px;
-  color: var(--text-tertiary);
+  color: var(--ink-subtle);
   margin-bottom: 20px;
 }
 
 /* Provider card */
 .provider-card {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
   padding: 16px;
   margin-bottom: 12px;
   transition: border-color 0.15s;
 }
 
 .provider-card:focus-within {
-  border-color: var(--color-primary);
+  border-color: var(--brand);
 }
 
 .provider-fields {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--hairline);
 }
 
 .provider-card-header {
@@ -72,7 +74,7 @@
 .provider-name {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -81,14 +83,14 @@
 .provider-badge {
   font-size: 11px;
   padding: 2px 8px;
-  border-radius: var(--radius-full);
-  background: var(--bg-secondary);
-  color: var(--text-tertiary);
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  color: var(--ink-tertiary);
 }
 
 .provider-badge.configured {
-  background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 /* Toggle switch */
@@ -100,14 +102,14 @@
 
 .toggle-label {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
 }
 
 .toggle {
   position: relative;
   width: 36px;
   height: 20px;
-  background: var(--border-color);
+  background: var(--hairline-strong);
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.2s;
@@ -116,7 +118,7 @@
 }
 
 .toggle.active {
-  background: var(--color-primary);
+  background: var(--brand);
 }
 
 .toggle::after {
@@ -127,9 +129,8 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: white;
+  background: var(--ink);
   transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .toggle.active::after {
@@ -156,25 +157,24 @@
 .field label {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
 }
 
 .field input,
 .field select {
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
   font-size: 13px;
-  color: var(--text-primary);
-  background: var(--bg-secondary);
+  color: var(--ink);
+  background: var(--surface-2);
   transition: border-color 0.15s;
 }
 
 .field input:focus,
 .field select:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(124, 108, 240, 0.15);
+  border-color: var(--brand);
 }
 
 .field input[type="password"] {
@@ -190,33 +190,32 @@
 
 .default-model-item {
   padding: 10px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
   cursor: pointer;
   transition: all 0.15s;
-  background: var(--bg-secondary);
+  background: var(--surface-2);
 }
 
 .default-model-item:hover {
-  border-color: var(--color-primary);
-  background: rgba(124, 108, 240, 0.06);
+  border-color: var(--brand);
+  background: var(--brand-bg);
 }
 
 .default-model-item.selected {
-  border-color: var(--color-primary);
-  background: rgba(124, 108, 240, 0.1);
-  box-shadow: 0 0 0 1px var(--color-primary);
+  border-color: var(--brand);
+  background: var(--brand-bg);
 }
 
 .default-model-item .model-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--ink);
 }
 
 .default-model-item .model-provider {
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
   margin-top: 2px;
 }
 
@@ -236,28 +235,29 @@
 
 .save-btn {
   padding: 10px 24px;
-  border-radius: var(--radius-full);
+  border-radius: var(--r-md);
   font-size: 14px;
-  font-weight: 500;
-  background: var(--color-primary);
-  color: var(--text-inverse);
-  transition: all 0.15s;
+  font-weight: 600;
+  background: var(--brand);
+  color: var(--ink);
+  transition: background 0.15s;
   border: none;
   cursor: pointer;
 }
 
 .save-btn:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: var(--brand-hover);
 }
 
 .save-btn:disabled {
-  background: var(--border-color);
+  background: var(--hairline-strong);
+  color: var(--ink-tertiary);
   cursor: not-allowed;
 }
 
 .save-status {
   font-size: 13px;
-  color: var(--color-success);
+  color: var(--success);
   animation: fade-in 0.3s;
 }
 
@@ -269,18 +269,18 @@
 /* Test button */
 .test-btn {
   padding: 6px 12px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 12px;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  color: var(--brand);
+  border: 1px solid var(--brand);
   background: transparent;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .test-btn:hover {
-  background: var(--color-primary);
-  color: white;
+  background: var(--brand);
+  color: var(--ink);
 }
 
 .test-btn.testing {
@@ -292,58 +292,58 @@
 .test-result {
   margin-top: 8px;
   padding: 6px 10px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 12px;
 }
 
 .test-ok {
-  background: rgba(34, 197, 94, 0.1);
-  color: #4ade80;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 .test-fail {
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 /* Add model button */
 .add-model-btn {
   padding: 6px 14px;
-  border-radius: var(--radius-full);
+  border-radius: var(--r-md);
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  color: var(--brand);
+  border: 1px solid var(--brand);
   background: transparent;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .add-model-btn:hover {
-  background: var(--color-primary);
-  color: white;
+  background: var(--brand);
+  color: var(--ink);
 }
 
 /* Custom model list */
 .empty-custom {
   padding: 24px;
   text-align: center;
-  color: var(--text-tertiary);
+  color: var(--ink-subtle);
   font-size: 13px;
-  border: 1px dashed var(--border-color);
-  border-radius: var(--radius-md);
+  border: 1px dashed var(--hairline-strong);
+  border-radius: var(--r-md);
 }
 
 .custom-model-card {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
   padding: 14px 16px;
   margin-bottom: 8px;
   transition: border-color 0.15s;
 }
 
 .custom-model-card:hover {
-  border-color: var(--border-color);
+  border-color: var(--hairline-strong);
 }
 
 .custom-model-header {
@@ -355,17 +355,17 @@
 .custom-model-label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
   margin-right: 8px;
 }
 
 .custom-model-id {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--ink-muted);
   font-family: monospace;
-  background: var(--bg-secondary);
+  background: var(--surface-2);
   padding: 1px 6px;
-  border-radius: 4px;
+  border-radius: var(--r-xs);
 }
 
 .custom-model-actions {
@@ -375,25 +375,25 @@
 
 .edit-btn {
   padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 12px;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  color: var(--ink-muted);
+  border: 1px solid var(--hairline);
   background: transparent;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .edit-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--brand);
+  color: var(--brand);
 }
 
 .delete-btn {
   padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 12px;
-  color: var(--color-danger);
+  color: var(--danger);
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
@@ -401,24 +401,30 @@
 }
 
 .delete-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: var(--color-danger);
+  background: var(--danger-bg);
+  border-color: var(--danger);
 }
 
 /* Custom model form */
 .custom-form-card {
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--brand);
+  border-radius: var(--r-md);
   padding: 20px;
   margin-top: 12px;
-  background: rgba(124, 108, 240, 0.04);
+  background: var(--brand-bg);
 }
 
 .custom-form-title {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
   margin-bottom: 16px;
+}
+
+.custom-form-card .field input,
+.custom-form-card .field select {
+  background: var(--surface-1);
+  border-color: var(--hairline-strong);
 }
 
 .custom-form-actions {
@@ -430,39 +436,23 @@
 
 .save-hint {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--ink-subtle);
 }
 
 .cancel-btn {
   padding: 8px 20px;
-  border-radius: var(--radius-full);
+  border-radius: var(--r-md);
   font-size: 14px;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  color: var(--ink-muted);
+  border: 1px solid var(--hairline);
   background: transparent;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .cancel-btn:hover {
-  border-color: var(--text-secondary);
-}
-
-/* Select style */
-.field select {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-  cursor: pointer;
-}
-
-.field select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(124, 108, 240, 0.15);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
 }
 
 /* Responsive */

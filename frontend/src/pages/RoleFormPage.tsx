@@ -13,18 +13,106 @@ interface RoleForm {
   permissions: string[];
 }
 
-const AVAILABLE_PERMISSIONS = [
-  { value: 'department:create', label: '创建部门' },
-  { value: 'department:read', label: '查看部门' },
-  { value: 'department:update', label: '编辑部门' },
-  { value: 'department:delete', label: '删除部门' },
-  { value: 'user:manage', label: '用户管理' },
-  { value: 'agent:manage', label: '智能体管理' },
+interface ModulePerm {
+  key: string;
+  label: string;
+  actions: { key: string; label: string }[];
+}
+
+const MODULE_PERMISSIONS: ModulePerm[] = [
+  {
+    key: 'department',
+    label: '部门管理',
+    actions: [
+      { key: 'create', label: '新增' },
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
+  {
+    key: 'agent',
+    label: '智能体',
+    actions: [
+      { key: 'create', label: '新增' },
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
+  {
+    key: 'skill',
+    label: 'Skill',
+    actions: [
+      { key: 'create', label: '新增' },
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
+  {
+    key: 'knowledge',
+    label: '知识库',
+    actions: [
+      { key: 'create', label: '新增' },
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+      { key: 'review', label: '审核' },
+    ],
+  },
+  {
+    key: 'user',
+    label: '用户',
+    actions: [
+      { key: 'read', label: '查看' },
+      { key: 'create', label: '新增' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
+  {
+    key: 'role',
+    label: '角色',
+    actions: [
+      { key: 'create', label: '新增' },
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
+  {
+    key: 'settings',
+    label: '模型设置',
+    actions: [
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+    ],
+  },
+  {
+    key: 'conversation',
+    label: '聊天记录',
+    actions: [
+      { key: 'read', label: '查看' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
+  {
+    key: 'wiki',
+    label: 'Wiki 知识库',
+    actions: [
+      { key: 'create', label: '新增' },
+      { key: 'read', label: '查看' },
+      { key: 'update', label: '编辑' },
+      { key: 'delete', label: '删除' },
+    ],
+  },
 ];
 
 export default function RoleFormPage() {
   const { roleId } = useParams();
   const isEdit = !!roleId;
+  const isBuiltin = roleId && ['role_super_admin', 'role_admin', 'role_user'].includes(roleId);
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RoleForm>({
@@ -56,6 +144,20 @@ export default function RoleFormPage() {
       permissions: prev.permissions.includes(perm)
         ? prev.permissions.filter((p) => p !== perm)
         : [...prev.permissions, perm],
+    }));
+  };
+
+  const isModuleFullyChecked = (mod: ModulePerm) =>
+    mod.actions.every((a) => form.permissions.includes(`${mod.key}:${a.key}`));
+
+  const toggleModule = (mod: ModulePerm) => {
+    const allChecked = isModuleFullyChecked(mod);
+    const permStrings = mod.actions.map((a) => `${mod.key}:${a.key}`);
+    setForm((prev) => ({
+      ...prev,
+      permissions: allChecked
+        ? prev.permissions.filter((p) => !permStrings.includes(p))
+        : [...new Set([...prev.permissions, ...permStrings])],
     }));
   };
 
@@ -103,6 +205,7 @@ export default function RoleFormPage() {
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="请输入角色名称"
               required
+              disabled={!!isBuiltin}
             />
           </div>
           <div className="role-form-field">
@@ -118,16 +221,30 @@ export default function RoleFormPage() {
           <div className="role-form-field">
             <label>权限配置</label>
             <div className="role-perm-list">
-              {AVAILABLE_PERMISSIONS.map((perm) => (
-                <label key={perm.value} className="role-perm-item">
-                  <input
-                    type="checkbox"
-                    checked={form.permissions.includes(perm.value)}
-                    onChange={() => togglePermission(perm.value)}
-                  />
-                  <span>{perm.label}</span>
-                  <code>{perm.value}</code>
-                </label>
+              {MODULE_PERMISSIONS.map((mod) => (
+                <div key={mod.key} className="role-perm-row">
+                  <span className="role-perm-module">{mod.label}</span>
+                  <div className="role-perm-actions">
+                    {mod.actions.map((a) => (
+                      <label key={a.key} className="role-perm-item">
+                        <input
+                          type="checkbox"
+                          checked={form.permissions.includes(`${mod.key}:${a.key}`)}
+                          onChange={() => togglePermission(`${mod.key}:${a.key}`)}
+                        />
+                        <span>{a.label}</span>
+                      </label>
+                    ))}
+                    <label className="role-perm-item role-perm-all">
+                      <input
+                        type="checkbox"
+                        checked={isModuleFullyChecked(mod)}
+                        onChange={() => toggleModule(mod)}
+                      />
+                      <span>全选</span>
+                    </label>
+                  </div>
+                </div>
               ))}
             </div>
           </div>

@@ -1,8 +1,11 @@
 import json
 import httpx
 from typing import AsyncIterator
-from .base import BaseModelAdapter, estimate_cost
-from ..models.schemas import ChatMessage, TokenUsage
+from .base import BaseModelAdapter, estimate_cost, strip_images_from_messages
+from ..models.schemas import TokenUsage
+
+# URL patterns for OpenAI-compatible APIs that don't support vision
+_NON_VISION_URLS = ("deepseek.com", "xiaomimimo.com")
 
 
 class OpenAIAdapter(BaseModelAdapter):
@@ -10,42 +13,58 @@ class OpenAIAdapter(BaseModelAdapter):
 
     async def chat_stream(
         self,
-        messages: list[ChatMessage],
+        api_messages: list[dict],
         model: str,
         api_key: str,
         system_prompt: str | None = None,
         base_url: str | None = None,
-    ) -> AsyncIterator[tuple[str, TokenUsage | None]]:
+        extra_headers: dict[str, str] | None = None,
+    ) -> AsyncIterator[tuple[str, TokenUsage | None, bool]]:
         url = (base_url or self.BASE_URL).rstrip("/")
-        api_messages = []
+        # Strip images for OpenAI-compatible APIs that don't support vision
+        if any(p in url.lower() for p in _NON_VISION_URLS):
+            has_before = any(isinstance(m.get("content"), list) for m in api_messages)
+            api_messages = strip_images_from_messages(api_messages)
+            has_after = any(isinstance(m.get("content"), list) for m in api_messages)
+            print(f"[OPENAI-ADAPTER] stripped images for {url}: had={has_before} still_has={has_after}")
+        messages = []
         if system_prompt:
-            api_messages.append({"role": "system", "content": system_prompt})
-        for msg in messages:
-            api_messages.append({"role": msg.role, "content": msg.content})
+            messages.append({"role": "system", "content": system_prompt})
+        messages.extend(api_messages)
 
         payload = {
             "model": model,
-            "messages": api_messages,
+            "messages": messages,
             "stream": True,
-            "stream_options": {"include_usage": True},
         }
 
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+        if extra_headers:
+            headers.update(extra_headers)
+
+        async with httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=120.0)) as client:
             async with client.stream(
                 "POST",
                 f"{url}/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
+                headers=headers,
                 json=payload,
             ) as resp:
-                resp.raise_for_status()
+                if resp.status_code >= 400:
+                    body = await resp.aread()
+                    detail = body.decode("utf-8", errors="replace")[:500]
+                    raise httpx.HTTPStatusError(
+                        f"HTTP {resp.status_code} from {url}: {detail}",
+                        request=resp.request,
+                        response=resp,
+                    )
                 async for line in resp.aiter_lines():
-                    if not line.startswith("data: "):
+                    if not line.startswith("data:"):
                         continue
-                    data_str = line[6:]
-                    if data_str.strip() == "[DONE]":
+                    data_str = line[5:].strip()
+                    if data_str == "[DONE]":
                         break
                     try:
                         data = json.loads(data_str)
@@ -61,12 +80,15 @@ class OpenAIAdapter(BaseModelAdapter):
                             completion_tokens=completion_t,
                             total_tokens=prompt_t + completion_t,
                             estimated_cost=estimate_cost(model, prompt_t, completion_t),
-                        ))
+                        ), False)
                         continue
 
                     choices = data.get("choices", [])
                     if choices:
                         delta = choices[0].get("delta", {})
+                        reasoning = delta.get("reasoning_content", "")
+                        if reasoning:
+                            yield (reasoning, None, True)
                         content = delta.get("content", "")
                         if content:
-                            yield (content, None)
+                            yield (content, None, False)

@@ -2,30 +2,31 @@
 .agent-form-page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 32px 24px 60px;
+  padding: 40px 24px 72px;
 }
 
 .agent-form-header {
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .agent-form-header h1 {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
   margin-bottom: 6px;
 }
 
 .agent-form-header p {
   font-size: 14px;
-  color: var(--text-tertiary);
+  color: var(--ink-subtle);
 }
 
 /* Form Card */
 .agent-form-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -46,28 +47,28 @@
 
 .agent-form-field label {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-weight: 500;
+  color: var(--ink-muted);
 }
 
 .agent-form-field input,
 .agent-form-field textarea,
 .agent-form-field select {
   padding: 9px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
   font-size: 14px;
-  color: var(--text-primary);
-  background: var(--bg-secondary);
+  color: var(--ink);
+  background: var(--surface-1);
   transition: border-color 0.15s;
+  font-family: inherit;
 }
 
 .agent-form-field input:focus,
 .agent-form-field textarea:focus,
 .agent-form-field select:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(124, 108, 240, 0.12);
+  border-color: var(--brand);
 }
 
 .agent-form-field textarea {
@@ -77,7 +78,7 @@
 
 .agent-form-field input::placeholder,
 .agent-form-field textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
 }
 
 /* Icon Picker */
@@ -88,27 +89,28 @@
 .icon-preview-btn {
   width: 52px;
   height: 52px;
-  border-radius: var(--radius-md);
+  border-radius: var(--r-md);
   font-size: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.15s;
+  border: 1px solid var(--hairline);
+  background: var(--surface-1);
+  transition: border-color 0.15s;
 }
 
 .icon-preview-btn:hover {
-  border-color: var(--color-primary);
+  border-color: var(--brand);
 }
 
 .icon-picker-dropdown {
   position: absolute;
   top: 60px;
   left: 0;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
   box-shadow: var(--shadow-lg);
   padding: 12px;
   z-index: 50;
@@ -125,42 +127,42 @@
 .icon-pick-item {
   width: 42px;
   height: 42px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background 0.15s;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
 }
 
 .icon-pick-item:hover {
-  background: var(--bg-hover);
+  background: var(--surface-2);
 }
 
 .icon-pick-item.selected {
-  background: var(--bg-active);
-  border-color: var(--color-primary);
+  background: var(--brand-bg);
+  border-color: var(--brand);
 }
 
 .color-pick-row {
   display: flex;
   gap: 6px;
   padding-top: 8px;
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--hairline);
 }
 
 .color-pick-item {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   transition: all 0.15s;
 }
 
@@ -169,85 +171,61 @@
 }
 
 .color-pick-item.selected {
-  border-width: 2px;
+  border-color: var(--ink);
 }
 
-/* Suggestions Editor */
-.suggestions-editor {
+/* Skill Selector */
+.skill-selector {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.suggestion-tag {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 6px;
-  padding: 6px 12px;
-  background: var(--bg-hover);
-  border-radius: var(--radius-full);
-  font-size: 13px;
-  color: var(--text-primary);
 }
 
-.suggestion-tag button {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+.skill-option {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.skill-option:hover {
+  border-color: var(--brand);
+  background: var(--brand-bg);
+}
+
+.skill-option.selected {
+  border-color: var(--brand);
+  background: var(--brand-bg);
+}
+
+.skill-option input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: var(--brand);
+}
+
+.skill-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.skill-option-name {
   font-size: 14px;
-  color: var(--text-tertiary);
-  transition: all 0.15s;
+  font-weight: 500;
+  color: var(--ink);
 }
 
-.suggestion-tag button:hover {
-  background: var(--bg-active);
-  color: var(--text-primary);
-}
-
-.suggestion-input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 200px;
-}
-
-.suggestion-input-wrap input {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-}
-
-.suggestion-input-wrap input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
-.suggestion-input-wrap button {
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  transition: all 0.15s;
+.skill-option-desc {
+  font-size: 12px;
+  color: var(--ink-subtle);
   white-space: nowrap;
-}
-
-.suggestion-input-wrap button:hover:not(:disabled) {
-  background: var(--color-primary);
-  color: var(--text-inverse);
-}
-
-.suggestion-input-wrap button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Knowledge Files */
@@ -262,10 +240,10 @@
   align-items: center;
   gap: 6px;
   padding: 6px 10px;
-  background: var(--bg-hover);
-  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
 }
 
 .knowledge-file-item button {
@@ -276,28 +254,28 @@
   justify-content: center;
   border-radius: 50%;
   font-size: 14px;
-  color: var(--text-tertiary);
+  color: var(--ink-subtle);
 }
 
 .knowledge-file-item button:hover {
-  background: var(--bg-active);
-  color: var(--text-primary);
+  background: var(--surface-3);
+  color: var(--ink);
 }
 
 .knowledge-upload-btn {
   display: flex;
   align-items: center;
   padding: 6px 14px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   font-size: 13px;
-  color: var(--color-primary);
-  border: 1px dashed var(--color-primary);
+  color: var(--brand);
+  border: 1px dashed var(--brand);
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .knowledge-upload-btn:hover {
-  background: rgba(124, 108, 240, 0.06);
+  background: var(--brand-bg);
 }
 
 /* Actions */
@@ -311,41 +289,43 @@
 
 .cancel-btn {
   padding: 10px 24px;
-  border-radius: var(--radius-full);
+  border-radius: var(--r-md);
   font-size: 14px;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  color: var(--ink-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
   transition: all 0.15s;
 }
 
 .cancel-btn:hover {
-  border-color: var(--text-secondary);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
 }
 
 .save-agent-btn {
   padding: 10px 28px;
-  border-radius: var(--radius-full);
+  border-radius: var(--r-md);
   font-size: 14px;
   font-weight: 500;
-  background: var(--color-primary);
-  color: var(--text-inverse);
+  background: var(--brand);
+  color: #fff;
   transition: all 0.15s;
 }
 
 .save-agent-btn:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: var(--brand-hover);
 }
 
 .save-agent-btn:disabled {
-  background: var(--bg-active);
-  color: var(--text-tertiary);
+  background: var(--surface-3);
+  color: var(--ink-tertiary);
   cursor: not-allowed;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
   .agent-form-page {
-    padding: 20px 16px 40px;
+    padding: 24px 16px 48px;
   }
 
   .agent-form-row {

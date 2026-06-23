@@ -1,34 +1,17 @@
-import json
 import uuid
 from datetime import datetime
-from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.auth import get_current_user
+from ..core.database import get_db
+from ..core.crud import (
+    get_conversation, list_conversations as crud_list_conversations,
+    create_conversation, update_conversation, delete_conversation,
+)
 
 router = APIRouter(prefix="/api/conversations", tags=["conversations"])
-
-DATA_DIR = Path("./data")
-
-
-
-def _get_memory_dir() -> Path:
-    settings_file = DATA_DIR / "settings.json"
-    memory_dir = DATA_DIR / "conversations"
-    if settings_file.exists():
-        try:
-            data = json.loads(settings_file.read_text(encoding="utf-8"))
-            if data.get("memory_dir"):
-                memory_dir = Path(data["memory_dir"])
-        except Exception:
-            pass
-    memory_dir.mkdir(parents=True, exist_ok=True)
-    return memory_dir
-
-
-def _conv_path(conv_id: str) -> Path:
-    return _get_memory_dir() / f"{conv_id}.json"
 
 
 class ConversationCreate(BaseModel):
@@ -47,45 +30,34 @@ class ConversationUpdate(BaseModel):
 
 
 @router.get("/")
-async def list_conversations(agent_id: str | None = None, current_user: dict = Depends(get_current_user)):
-    conv_dir = _get_memory_dir()
-    user_id = current_user["id"]
-    conversations = []
-    for f in sorted(conv_dir.glob("*.json"), reverse=True):
-        try:
-            conv = json.loads(f.read_text(encoding="utf-8"))
-            if conv.get("user_id") != user_id:
-                continue
-            if agent_id and conv.get("agent_id") != agent_id:
-                continue
-            conversations.append({
-                "id": conv["id"],
-                "agent_id": conv.get("agent_id", ""),
-                "title": conv.get("title", ""),
-                "model": conv.get("model", ""),
-                "provider": conv.get("provider", ""),
-                "message_count": len(conv.get("messages", [])),
-                "created_at": conv.get("created_at", ""),
-                "updated_at": conv.get("updated_at", ""),
-            })
-        except Exception:
-            continue
-    return conversations
+async def list_conversations(
+    agent_id: str | None = None,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    return await crud_list_conversations(db, user_id=current_user["id"], agent_id=agent_id)
 
 
 @router.get("/{conv_id}")
-async def get_conversation(conv_id: str, current_user: dict = Depends(get_current_user)):
-    path = _conv_path(conv_id)
-    if not path.exists():
+async def get_conversation_endpoint(
+    conv_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    conv = await get_conversation(db, conv_id)
+    if not conv:
         raise HTTPException(status_code=404, detail="对话不存在")
-    conv = json.loads(path.read_text(encoding="utf-8"))
     if conv.get("user_id") != current_user["id"]:
         raise HTTPException(status_code=403, detail="无权访问此对话")
     return conv
 
 
 @router.post("/")
-async def create_conversation(conv: ConversationCreate, current_user: dict = Depends(get_current_user)):
+async def create_conversation_endpoint(
+    conv: ConversationCreate,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
     conv_id = "conv_" + uuid.uuid4().hex[:8]
     now = datetime.now().isoformat()
     data = {
@@ -99,46 +71,55 @@ async def create_conversation(conv: ConversationCreate, current_user: dict = Dep
         "created_at": now,
         "updated_at": now,
     }
-    _conv_path(conv_id).write_text(
-        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    await create_conversation(db, data)
+    await db.commit()
     return data
 
 
 @router.put("/{conv_id}")
-async def update_conversation(conv_id: str, conv: ConversationUpdate, current_user: dict = Depends(get_current_user)):
-    path = _conv_path(conv_id)
-    if not path.exists():
+async def update_conversation_endpoint(
+    conv_id: str,
+    conv: ConversationUpdate,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    existing = await get_conversation(db, conv_id)
+    if not existing:
         raise HTTPException(status_code=404, detail="对话不存在")
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if data.get("user_id") != current_user["id"]:
+    if existing.get("user_id") != current_user["id"]:
         raise HTTPException(status_code=403, detail="无权修改此对话")
+
+    update_data = {}
     if conv.title is not None:
-        data["title"] = conv.title
+        update_data["title"] = conv.title
     if conv.messages is not None:
-        data["messages"] = conv.messages
-        if not data.get("title"):
-            data["title"] = _title_from_messages(conv.messages)
+        update_data["messages"] = conv.messages
+        if not existing.get("title"):
+            update_data["title"] = _title_from_messages(conv.messages)
     if conv.model is not None:
-        data["model"] = conv.model
+        update_data["model"] = conv.model
     if conv.provider is not None:
-        data["provider"] = conv.provider
-    data["updated_at"] = datetime.now().isoformat()
-    path.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    return data
+        update_data["provider"] = conv.provider
+    update_data["updated_at"] = datetime.now().isoformat()
+
+    result = await update_conversation(db, conv_id, update_data)
+    await db.commit()
+    return result
 
 
 @router.delete("/{conv_id}")
-async def delete_conversation(conv_id: str, current_user: dict = Depends(get_current_user)):
-    path = _conv_path(conv_id)
-    if not path.exists():
+async def delete_conversation_endpoint(
+    conv_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    existing = await get_conversation(db, conv_id)
+    if not existing:
         raise HTTPException(status_code=404, detail="对话不存在")
-    conv = json.loads(path.read_text(encoding="utf-8"))
-    if conv.get("user_id") != current_user["id"]:
+    if existing.get("user_id") != current_user["id"]:
         raise HTTPException(status_code=403, detail="无权删除此对话")
-    path.unlink()
+    await delete_conversation(db, conv_id)
+    await db.commit()
     return {"status": "ok"}
 
 

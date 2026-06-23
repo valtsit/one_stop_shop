@@ -9,42 +9,43 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .agent-manage-header h1 {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
   margin-bottom: 4px;
 }
 
 .agent-manage-header p {
-  font-size: 14px;
-  color: var(--text-tertiary);
+  font-size: 13px;
+  color: var(--ink-subtle);
 }
 
 .create-agent-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: var(--radius-full);
-  font-size: 14px;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 13px;
   font-weight: 500;
-  background: var(--color-primary);
-  color: var(--text-inverse);
-  transition: all 0.2s;
+  background: var(--brand);
+  color: var(--ink);
+  transition: background 0.15s;
 }
 
 .create-agent-btn:hover {
-  background: var(--color-primary-hover);
-  box-shadow: 0 2px 8px rgba(124, 108, 240, 0.3);
+  background: var(--brand-hover);
 }
 
 .create-agent-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 /* Empty state */
@@ -58,14 +59,14 @@
 }
 
 .agent-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-  opacity: 0.6;
+  font-size: 40px;
+  margin-bottom: 12px;
+  opacity: 0.5;
 }
 
 .agent-empty p {
-  font-size: 15px;
-  color: var(--text-tertiary);
+  font-size: 14px;
+  color: var(--ink-subtle);
   margin-bottom: 20px;
 }
 
@@ -73,24 +74,22 @@
 .agent-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .agent-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 20px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s;
+  gap: 10px;
+  transition: border-color 0.15s;
 }
 
 .agent-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-color);
+  border-color: var(--hairline-strong);
 }
 
 .agent-card-top {
@@ -100,14 +99,15 @@
 }
 
 .agent-card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 20px;
   flex-shrink: 0;
+  background: var(--surface-2);
 }
 
 .agent-card-info {
@@ -117,9 +117,9 @@
 }
 
 .agent-card-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -127,12 +127,12 @@
 
 .agent-card-category {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
 }
 
 .agent-card-desc {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -143,29 +143,29 @@
 .agent-card-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .agent-card-tag {
   font-size: 11px;
-  padding: 3px 8px;
-  border-radius: var(--radius-full);
-  background: var(--bg-hover);
-  color: var(--text-tertiary);
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--ink-subtle);
 }
 
 .agent-card-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-light);
+  padding-top: 10px;
+  border-top: 1px solid var(--hairline);
 }
 
 .agent-action-btn {
   flex: 1;
-  padding: 7px 0;
-  border-radius: var(--radius-sm);
+  padding: 6px 0;
+  border-radius: var(--r-sm);
   font-size: 13px;
   font-weight: 500;
   text-align: center;
@@ -173,36 +173,39 @@
 }
 
 .agent-action-btn.edit {
-  color: var(--color-primary);
-  border: 1px solid var(--border-color);
+  color: var(--brand);
+  border: 1px solid var(--hairline);
+  background: transparent;
 }
 
 .agent-action-btn.edit:hover {
-  border-color: var(--color-primary);
-  background: rgba(124, 108, 240, 0.06);
+  border-color: var(--brand);
+  background: var(--brand-bg);
 }
 
 .agent-action-btn.chat {
-  color: var(--text-inverse);
-  background: var(--color-primary);
+  color: var(--ink);
+  background: var(--brand);
+  border: 1px solid transparent;
 }
 
 .agent-action-btn.chat:hover {
-  background: var(--color-primary-hover);
+  background: var(--brand-hover);
 }
 
 .agent-action-btn.delete {
-  color: var(--color-danger);
-  border: 1px solid var(--border-color);
+  color: var(--danger);
+  border: 1px solid var(--hairline);
+  background: transparent;
 }
 
 .agent-action-btn.delete:hover {
-  border-color: var(--color-danger);
-  background: rgba(239, 68, 68, 0.06);
+  border-color: var(--danger);
+  background: var(--danger-bg);
 }
 
 .agent-action-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 

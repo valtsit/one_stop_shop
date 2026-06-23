@@ -9,6 +9,18 @@ frontend/dist/
 
 # Environment variables
 backend/.env
+backend/data/.jwt_secret
+
+# Backup files
+*.bak
+backend/data/*.bak
+backend/data/*.bak/
+
+# Debug logs
+chat_debug.log
+
+# Test files
+test_img.png
 
 # Runtime data (数据库、上传文件、会话记录等)
 backend/data/app.db

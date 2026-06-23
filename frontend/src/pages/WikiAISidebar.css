@@ -1,0 +1,366 @@
+/* ===== Wiki AI Sidebar ===== */
+
+/* Toggle button - fixed on right edge */
+.wiki-sidebar-toggle {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border: 1px solid var(--hairline);
+  border-right: none;
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  background: var(--surface-1);
+  color: var(--brand);
+  cursor: pointer;
+  transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.06);
+}
+
+.wiki-sidebar-toggle:hover { background: var(--brand-bg); }
+.wiki-sidebar-toggle.open { right: 360px; }
+.wiki-sidebar-toggle svg { width: 18px; height: 18px; flex-shrink: 0; }
+.wiki-sidebar-toggle-label { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; }
+
+/* Sidebar panel - fixed overlay */
+.wiki-sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 360px;
+  z-index: 99;
+  background: var(--surface-0, #fff);
+  border-left: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  animation: wiki-sidebar-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes wiki-sidebar-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.wiki-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+
+.wiki-sidebar-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.wiki-sidebar-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--r-xs);
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.wiki-sidebar-close:hover { background: var(--surface-2); color: var(--ink); }
+
+/* Sidebar body */
+.wiki-sidebar-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.wiki-sidebar-section { margin-bottom: 16px; flex-shrink: 0; }
+
+.wiki-sidebar-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+}
+
+.wiki-sidebar-select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  background: var(--surface-1);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.wiki-sidebar-hint { font-size: 12px; color: var(--ink-subtle); }
+
+/* Sidebar action buttons */
+.wiki-sidebar-actions { display: flex; gap: 8px; }
+
+.wiki-sidebar-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--surface-1);
+  color: var(--brand);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wiki-sidebar-btn:hover:not(:disabled) { border-color: var(--brand); background: var(--brand-bg); }
+.wiki-sidebar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.wiki-sidebar-btn svg { width: 14px; height: 14px; }
+
+/* AI Chat area */
+.wiki-sidebar-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.wiki-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+  min-height: 80px;
+  margin-bottom: 4px;
+}
+
+.wiki-chat-placeholder {
+  text-align: center;
+  padding: 32px 12px;
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  line-height: 1.6;
+  border: 1px dashed var(--hairline);
+  border-radius: var(--r-sm);
+}
+
+/* Label row with clear button */
+.wiki-sidebar-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.wiki-chat-clear {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--ink-tertiary);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--r-xs);
+  transition: all 0.15s;
+}
+.wiki-chat-clear:hover { color: var(--danger); background: var(--danger-bg); }
+
+/* Conversation messages */
+.wiki-chat-msg {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.wiki-chat-msg-user {
+  justify-content: flex-end;
+}
+
+.wiki-chat-msg-assistant {
+  justify-content: flex-start;
+}
+
+.wiki-chat-bubble-user {
+  background: var(--brand);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 12px 12px 2px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 85%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.wiki-chat-bubble-ai {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  padding: 10px 14px;
+  border-radius: 12px 12px 12px 2px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink);
+  max-width: 90%;
+  word-break: break-word;
+}
+
+.wiki-chat-bubble-error {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.wiki-chat-thinking-bubble {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-subtle);
+  font-size: 12px;
+}
+
+.wiki-chat-answer-text {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+/* Markdown inside chat answer */
+.wiki-chat-answer-text h1,
+.wiki-chat-answer-text h2,
+.wiki-chat-answer-text h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 12px 0 6px;
+}
+.wiki-chat-answer-text h1:first-child,
+.wiki-chat-answer-text h2:first-child,
+.wiki-chat-answer-text h3:first-child { margin-top: 0; }
+
+.wiki-chat-answer-text p { margin: 0 0 8px; }
+.wiki-chat-answer-text p:last-child { margin-bottom: 0; }
+
+.wiki-chat-answer-text ul,
+.wiki-chat-answer-text ol { margin: 0 0 8px; padding-left: 20px; }
+.wiki-chat-answer-text li { margin-bottom: 3px; }
+
+.wiki-chat-answer-text strong { font-weight: 600; color: var(--ink); }
+
+.wiki-chat-answer-text code {
+  background: var(--surface-1);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: 'SF Mono', Consolas, monospace;
+}
+
+.wiki-chat-answer-text pre {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xs);
+  padding: 10px 12px;
+  overflow-x: auto;
+  margin: 0 0 8px;
+}
+.wiki-chat-answer-text pre code { background: none; padding: 0; }
+
+/* Citations */
+.wiki-chat-citations { border-top: 1px solid var(--hairline); padding-top: 10px; margin-top: 10px; }
+.wiki-chat-citations-title { font-size: 11px; font-weight: 600; color: var(--ink-muted); margin-bottom: 6px; }
+
+.wiki-chat-citation {
+  padding: 8px 10px;
+  border-radius: var(--r-xs);
+  background: var(--surface-1);
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.wiki-chat-citation:hover { border-color: var(--brand); background: var(--brand-bg); }
+
+.wiki-chat-cite-title { font-size: 12px; font-weight: 600; color: var(--brand); margin-bottom: 2px; }
+.wiki-chat-cite-excerpt {
+  font-size: 11px;
+  color: var(--ink-subtle);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+/* Chat input */
+.wiki-chat-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-shrink: 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.wiki-chat-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--surface-2);
+  font-family: inherit;
+  resize: none;
+  min-height: 40px;
+  max-height: 100px;
+  transition: border-color 0.15s;
+}
+
+.wiki-chat-input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-bg); }
+.wiki-chat-input::placeholder { color: var(--ink-tertiary); }
+
+.wiki-chat-send {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--brand);
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.wiki-chat-send:hover:not(:disabled) { background: var(--brand-hover); transform: scale(1.05); }
+.wiki-chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+.wiki-chat-send svg { width: 18px; height: 18px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wiki-sidebar { width: 320px; }
+  .wiki-sidebar-toggle.open { right: 320px; }
+}
+
+@media (max-width: 640px) {
+  .wiki-sidebar { width: 100%; left: 0; }
+  .wiki-sidebar-toggle { display: none; }
+}

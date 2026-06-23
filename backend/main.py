@@ -8,9 +8,16 @@ from app.api import chat, upload, settings as settings_api, agents, conversation
 from app.api import auth as auth_api, departments, users, roles
 from app.api import profile
 from app.api import admin_conversations
+from app.api import skills as skills_api
+from app.api import search as search_api
+from app.api import knowledge as knowledge_api
+from app.api import knowledge_submissions as knowledge_submissions_api
+from app.api import recycle_bin as recycle_bin_api
+from app.api import wiki as wiki_api
 from app.core.config import settings
 from app.core.database import init_db
 from app.core.seed import ensure_seed_data
+from app.core.migrate import run_migration
 
 FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
 
@@ -43,12 +50,20 @@ app.include_router(settings_api.router)
 app.include_router(agents.router)
 app.include_router(conversations.router)
 app.include_router(admin_conversations.router)
+app.include_router(skills_api.router)
+app.include_router(search_api.router)
+app.include_router(knowledge_api.router)
+app.include_router(knowledge_submissions_api.router)
+app.include_router(recycle_bin_api.router)
+app.include_router(wiki_api.router)
 
 
 @app.on_event("startup")
 async def startup():
-    ensure_seed_data()
     await init_db()
+    migrated = await run_migration()
+    if not migrated:
+        await ensure_seed_data()
 
 
 @app.get("/api/health")

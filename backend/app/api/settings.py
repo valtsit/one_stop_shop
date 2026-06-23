@@ -1,12 +1,14 @@
-import json
 import uuid
-from pathlib import Path
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
-router = APIRouter(prefix="/api/settings", tags=["settings"])
+from sqlalchemy.ext.asyncio import AsyncSession
 
-SETTINGS_FILE = Path("./data/settings.json")
+from ..core.auth import get_current_user, require_permission
+from ..core.crud import get_settings as crud_get_settings, update_settings as crud_update_settings
+from ..core.database import get_db
+
+router = APIRouter(prefix="/api/settings", tags=["settings"])
 
 DEFAULT_SETTINGS = {
     "providers": {
@@ -37,37 +39,8 @@ DEFAULT_SETTINGS = {
     "max_tokens": 4096,
     "custom_models": [],
     "memory_dir": "./data/conversations",
+    "recycle_bin_days": 30,
 }
-
-def _load_settings() -> dict:
-    import copy
-    defaults = copy.deepcopy(DEFAULT_SETTINGS)
-    if SETTINGS_FILE.exists():
-        try:
-            data = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
-            # Merge with defaults so missing fields get default values
-            for key, default_val in defaults.items():
-                if key not in data:
-                    data[key] = default_val
-                elif key == "providers" and isinstance(default_val, dict):
-                    for prov, prov_defaults in default_val.items():
-                        if prov not in data["providers"]:
-                            data["providers"][prov] = prov_defaults
-                        elif isinstance(prov_defaults, dict):
-                            for field, field_default in prov_defaults.items():
-                                if field not in data["providers"][prov]:
-                                    data["providers"][prov][field] = field_default
-            if "custom_models" not in data:
-                data["custom_models"] = []
-            return data
-        except Exception:
-            pass
-    return copy.deepcopy(DEFAULT_SETTINGS)
-
-
-def _save_settings(data: dict):
-    SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    SETTINGS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 class ProviderSettings(BaseModel):
@@ -84,6 +57,7 @@ class CustomModel(BaseModel):
     base_url: str = ""
     api_key: str = ""
     max_tokens: int = 4096
+    headers: dict[str, str] = {}
 
 
 class AppSettings(BaseModel):
@@ -94,16 +68,33 @@ class AppSettings(BaseModel):
     max_tokens: int = 4096
     custom_models: list[CustomModel] = []
     memory_dir: str = "./data/conversations"
+    recycle_bin_days: int = 30
 
 
 @router.get("")
-async def get_settings():
-    return _load_settings()
+async def get_settings(
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    data = await crud_get_settings(db)
+    # Strip API keys for non-admin users
+    role_id = current_user.get("role_id", "")
+    is_admin = role_id in ("role_super_admin", "role_admin")
+    if not is_admin:
+        providers = data.get("providers", {})
+        for prov in providers.values():
+            if isinstance(prov, dict) and "api_key" in prov:
+                prov["api_key"] = ""
+    return data
 
 
 @router.put("")
-async def update_settings(body: AppSettings):
-    existing = _load_settings()
+async def update_settings(
+    body: AppSettings,
+    current_user: dict = Depends(require_permission("settings:update")),
+    db: AsyncSession = Depends(get_db),
+):
+    existing = await crud_get_settings(db)
     data = body.model_dump()
     data["providers"] = {
         k: v.model_dump() if hasattr(v, "model_dump") else v
@@ -112,68 +103,102 @@ async def update_settings(body: AppSettings):
     # Preserve custom_models if not included in update
     if not data.get("custom_models"):
         data["custom_models"] = existing.get("custom_models", [])
-    _save_settings(data)
+    await crud_update_settings(db, data)
+    await db.commit()
     return {"status": "ok"}
 
 
 @router.get("/models")
-async def list_models():
-    """Return user custom models only."""
-    settings = _load_settings()
+async def list_models(
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return user custom models only (api_key stripped)."""
+    settings = await crud_get_settings(db)
     custom = settings.get("custom_models", [])
-    return [{**m, "builtin": False} for m in custom]
+    # Strip api_key from model configs for non-admin
+    role_id = current_user.get("role_id", "")
+    is_admin = role_id in ("role_super_admin", "role_admin")
+    results = []
+    for m in custom:
+        entry = {**m, "builtin": False}
+        if not is_admin and entry.get("api_key"):
+            entry["api_key"] = ""
+        results.append(entry)
+    return results
 
 
 # ---- Custom model CRUD ----
 
 @router.post("/models/custom")
-async def add_custom_model(body: CustomModel):
-    settings = _load_settings()
+async def add_custom_model(
+    body: CustomModel,
+    current_user: dict = Depends(require_permission("settings:update")),
+    db: AsyncSession = Depends(get_db),
+):
+    settings = await crud_get_settings(db)
     model_id = body.id or uuid.uuid4().hex[:8]
     new_model = body.model_dump()
     new_model["id"] = model_id
     settings.setdefault("custom_models", []).append(new_model)
-    _save_settings(settings)
+    await crud_update_settings(db, settings)
+    await db.commit()
     return new_model
 
 
 @router.put("/models/custom/{model_id}")
-async def update_custom_model(model_id: str, body: CustomModel):
-    settings = _load_settings()
+async def update_custom_model(
+    model_id: str,
+    body: CustomModel,
+    current_user: dict = Depends(require_permission("settings:update")),
+    db: AsyncSession = Depends(get_db),
+):
+    settings = await crud_get_settings(db)
     models = settings.get("custom_models", [])
     for i, m in enumerate(models):
         if m.get("id") == model_id:
             updated = body.model_dump()
             updated["id"] = model_id
             models[i] = updated
-            _save_settings(settings)
+            await crud_update_settings(db, settings)
+            await db.commit()
             return updated
     raise HTTPException(status_code=404, detail="模型不存在")
 
 
 @router.delete("/models/custom/{model_id}")
-async def delete_custom_model(model_id: str):
-    settings = _load_settings()
+async def delete_custom_model(
+    model_id: str,
+    current_user: dict = Depends(require_permission("settings:update")),
+    db: AsyncSession = Depends(get_db),
+):
+    settings = await crud_get_settings(db)
     models = settings.get("custom_models", [])
     settings["custom_models"] = [m for m in models if m.get("id") != model_id]
-    _save_settings(settings)
+    await crud_update_settings(db, settings)
+    await db.commit()
     return {"status": "ok"}
 
 
 @router.post("/models/test")
-async def test_model(body: dict):
+async def test_model(
+    body: dict,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
     """Test if a model config works by sending a minimal request."""
     from ..adapters import get_adapter
-    from ..models.schemas import ModelProvider, ChatMessage
+    from ..models.schemas import ModelProvider
 
     provider = body.get("provider", "openai")
     model = body.get("model", "gpt-4o")
     api_key = body.get("api_key", "")
     base_url = body.get("base_url", "")
+    extra_headers = body.get("headers") or {}
 
     if not api_key:
         # Try from saved settings
-        settings = _load_settings()
+        settings = await crud_get_settings(db)
         provider_conf = settings.get("providers", {}).get(provider, {})
         api_key = provider_conf.get("api_key", "")
         # Also check custom models
@@ -182,6 +207,8 @@ async def test_model(body: dict):
                 api_key = cm["api_key"]
                 if cm.get("base_url"):
                     base_url = cm["base_url"]
+                if cm.get("headers"):
+                    extra_headers.update(cm["headers"])
 
     if not api_key:
         raise HTTPException(status_code=400, detail="未配置 API Key")
@@ -198,15 +225,16 @@ async def test_model(body: dict):
 
     adapter = get_adapter(provider_enum)
 
-    test_messages = [ChatMessage(role="user", content="Hi, reply with 'OK' only.")]
+    test_messages = [{"role": "user", "content": "Hi, reply with 'OK' only."}]
 
     try:
         content = ""
-        async for chunk, usage in adapter.chat_stream(
-            messages=test_messages,
+        async for chunk, usage, thinking in adapter.chat_stream(
+            api_messages=test_messages,
             model=model,
             api_key=api_key,
             base_url=base_url or None,
+            extra_headers=extra_headers or None,
         ):
             content += chunk
             if content:

@@ -2,7 +2,7 @@ import json
 import httpx
 from typing import AsyncIterator
 from .base import BaseModelAdapter, estimate_cost
-from ..models.schemas import ChatMessage, TokenUsage
+from ..models.schemas import TokenUsage
 
 
 class GeminiAdapter(BaseModelAdapter):
@@ -10,20 +10,35 @@ class GeminiAdapter(BaseModelAdapter):
 
     async def chat_stream(
         self,
-        messages: list[ChatMessage],
+        api_messages: list[dict],
         model: str,
         api_key: str,
         system_prompt: str | None = None,
         base_url: str | None = None,
-    ) -> AsyncIterator[tuple[str, TokenUsage | None]]:
+        extra_headers: dict[str, str] | None = None,
+    ) -> AsyncIterator[tuple[str, TokenUsage | None, bool]]:
         url = (base_url or self.BASE_URL).rstrip("/")
         contents = []
-        for msg in messages:
-            role = "user" if msg.role == "user" else "model"
-            contents.append({
-                "role": role,
-                "parts": [{"text": msg.content}],
-            })
+        for msg in api_messages:
+            role = "user" if msg["role"] == "user" else "model"
+            content = msg.get("content", "")
+            if isinstance(content, list):
+                # Convert to Gemini parts format
+                parts = []
+                for part in content:
+                    if part.get("type") == "image_url":
+                        img_url = part.get("image_url", {}).get("url", "")
+                        if img_url.startswith("data:"):
+                            header, b64data = img_url.split(",", 1)
+                            mime_type = header.split(":")[1].split(";")[0]
+                            parts.append({"inlineData": {"mimeType": mime_type, "data": b64data}})
+                        else:
+                            parts.append({"text": f"[图片: {img_url}]"})
+                    elif part.get("type") == "text":
+                        parts.append({"text": part.get("text", "")})
+                contents.append({"role": role, "parts": parts})
+            else:
+                contents.append({"role": role, "parts": [{"text": content}]})
 
         payload: dict = {"contents": contents}
         if system_prompt:
@@ -55,7 +70,8 @@ class GeminiAdapter(BaseModelAdapter):
                         for part in parts:
                             text = part.get("text", "")
                             if text:
-                                yield (text, None)
+                                is_thinking = part.get("thought", False)
+                                yield (text, None, bool(is_thinking))
 
                     usage = data.get("usageMetadata")
                     if usage:
@@ -66,4 +82,4 @@ class GeminiAdapter(BaseModelAdapter):
                             completion_tokens=completion_t,
                             total_tokens=prompt_t + completion_t,
                             estimated_cost=estimate_cost(model, prompt_t, completion_t),
-                        ))
+                        ), False)

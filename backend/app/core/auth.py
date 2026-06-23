@@ -1,17 +1,14 @@
-import json
 from datetime import datetime, timedelta
 from functools import wraps
-from pathlib import Path
 
 import bcrypt
 from fastapi import Depends, HTTPException, Header
 from jose import JWTError, jwt
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .config import settings
-
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
-USERS_FILE = DATA_DIR / "users.json"
-ROLES_FILE = DATA_DIR / "roles.json"
+from .database import get_db
+from .crud import get_user, get_role
 
 
 def hash_password(password: str) -> str:
@@ -37,7 +34,10 @@ def decode_access_token(token: str) -> dict | None:
         return None
 
 
-async def get_current_user(authorization: str = Header(None)):
+async def get_current_user(
+    authorization: str = Header(None),
+    db: AsyncSession = Depends(get_db),
+):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="未登录或 token 无效")
     token = authorization.split(" ", 1)[1]
@@ -47,10 +47,7 @@ async def get_current_user(authorization: str = Header(None)):
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=401, detail="token 格式错误")
-    if not USERS_FILE.exists():
-        raise HTTPException(status_code=401, detail="用户数据不存在")
-    users = json.loads(USERS_FILE.read_text(encoding="utf-8"))
-    user = users.get(user_id)
+    user = await get_user(db, user_id)
     if not user:
         raise HTTPException(status_code=401, detail="用户不存在")
     if not user.get("is_active", True):
@@ -58,18 +55,25 @@ async def get_current_user(authorization: str = Header(None)):
     return user
 
 
+async def _check_permission(user: dict, permission: str, db: AsyncSession) -> bool:
+    """Check if a user has a given permission via DB query."""
+    role_id = user.get("role_id", "")
+    if not role_id:
+        return False
+    role = await get_role(db, role_id)
+    if not role:
+        return False
+    perms = role.get("permissions", [])
+    return "*" in perms or permission in perms
+
+
 def require_permission(permission: str):
     """依赖工厂：检查当前用户是否拥有指定权限"""
-    async def _check(current_user: dict = Depends(get_current_user)):
-        role_id = current_user.get("role_id", "")
-        if not ROLES_FILE.exists():
-            raise HTTPException(status_code=403, detail="权限不足")
-        roles = json.loads(ROLES_FILE.read_text(encoding="utf-8"))
-        role = roles.get(role_id)
-        if not role:
-            raise HTTPException(status_code=403, detail="权限不足")
-        perms = role.get("permissions", [])
-        if "*" not in perms and permission not in perms:
+    async def _check(
+        current_user: dict = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db),
+    ):
+        if not await _check_permission(current_user, permission, db):
             raise HTTPException(status_code=403, detail="权限不足")
         return current_user
     return _check

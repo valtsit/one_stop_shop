@@ -1,7 +1,8 @@
 import uuid
 from pathlib import Path
-from fastapi import APIRouter, UploadFile, HTTPException
+from fastapi import APIRouter, UploadFile, HTTPException, Depends
 from ..core.config import settings
+from ..core.auth import get_current_user
 
 router = APIRouter(prefix="/api/upload", tags=["upload"])
 
@@ -16,7 +17,10 @@ ALLOWED_EXTENSIONS = {
 
 
 @router.post("/")
-async def upload_file(file: UploadFile):
+async def upload_file(
+    file: UploadFile,
+    current_user: dict = Depends(get_current_user),
+):
     if not file.filename:
         raise HTTPException(status_code=400, detail="未选择文件")
 

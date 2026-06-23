@@ -1,59 +1,28 @@
-import json
 from datetime import datetime
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..core.auth import get_current_user, hash_password, verify_password
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from ..core.auth import get_current_user, hash_password, verify_password, require_permission
+from ..core.crud import update_user, get_role, get_department
+from ..core.database import get_db
 from ..models.schemas import ChangePasswordRequest, UserResponse
 
 router = APIRouter(prefix="/api/auth", tags=["profile"])
 
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
-USERS_FILE = DATA_DIR / "users.json"
-ROLES_FILE = DATA_DIR / "roles.json"
-DEPARTMENTS_FILE = DATA_DIR / "departments.json"
-
-
-def _load_users() -> dict[str, dict]:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if USERS_FILE.exists():
-        try:
-            data = json.loads(USERS_FILE.read_text(encoding="utf-8"))
-            if isinstance(data, dict):
-                return data
-        except (json.JSONDecodeError, Exception):
-            pass
-    return {}
-
-
-def _save_users(users: dict[str, dict]):
-    USERS_FILE.write_text(
-        json.dumps(users, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-
-
-def _load_json_file(path: Path) -> dict[str, dict]:
-    if path.exists():
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-            if isinstance(data, dict):
-                return data
-        except (json.JSONDecodeError, Exception):
-            pass
-    return {}
-
 
 @router.get("/profile")
-async def get_profile(current_user: dict = Depends(get_current_user)):
+async def get_profile(
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
     user = {k: v for k, v in current_user.items() if k != "password_hash"}
     # Enrich with role and department names
-    roles = _load_json_file(ROLES_FILE)
-    departments = _load_json_file(DEPARTMENTS_FILE)
-    role = roles.get(current_user.get("role_id", ""), {})
-    dept = departments.get(current_user.get("department_id", ""), {})
-    user["role_name"] = role.get("name", "")
-    user["department_name"] = dept.get("name", "")
+    role = await get_role(db, current_user.get("role_id", ""))
+    dept = await get_department(db, current_user.get("department_id", ""))
+    user["role_name"] = (role or {}).get("name", "")
+    user["department_name"] = (dept or {}).get("name", "")
     return user
 
 
@@ -61,39 +30,36 @@ async def get_profile(current_user: dict = Depends(get_current_user)):
 async def update_profile(
     body: dict,
     current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    users = _load_users()
     user_id = current_user.get("id")
-    user = users.get(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="用户不存在")
     # Only allow updating own display_name, email, phone
+    update_data = {}
     for field in ("display_name", "email", "phone"):
         if field in body:
-            user[field] = body[field]
-    user["updated_at"] = datetime.now().isoformat()
-    users[user_id] = user
-    _save_users(users)
+            update_data[field] = body[field]
+    update_data["updated_at"] = datetime.now().isoformat()
+    user = await update_user(db, user_id, update_data)
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    await db.commit()
     return UserResponse(**{k: v for k, v in user.items() if k != "password_hash"})
 
 
 @router.post("/change-password")
 async def change_password(
     body: ChangePasswordRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("password:change")),
+    db: AsyncSession = Depends(get_db),
 ):
-    role_id = current_user.get("role_id", "")
-    if role_id not in ("role_super_admin", "role_admin"):
-        raise HTTPException(status_code=403, detail="无权限修改密码")
     if not verify_password(body.old_password, current_user.get("password_hash", "")):
         raise HTTPException(status_code=400, detail="旧密码不正确")
-    users = _load_users()
     user_id = current_user.get("id")
-    user = users.get(user_id)
+    user = await update_user(db, user_id, {
+        "password_hash": hash_password(body.new_password),
+        "updated_at": datetime.now().isoformat(),
+    })
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
-    user["password_hash"] = hash_password(body.new_password)
-    user["updated_at"] = datetime.now().isoformat()
-    users[user_id] = user
-    _save_users(users)
+    await db.commit()
     return {"status": "ok"}

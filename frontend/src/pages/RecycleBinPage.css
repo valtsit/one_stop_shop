@@ -1,0 +1,220 @@
+/* ===== Recycle Bin Page ===== */
+.rb-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+.rb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.rb-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.rb-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.rb-clear-btn {
+  padding: 8px 16px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  background: transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+
+.rb-clear-btn:hover {
+  background: var(--danger-bg);
+}
+
+/* Filter tabs */
+.rb-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.rb-tab {
+  padding: 6px 16px;
+  border-radius: var(--r-full);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--hairline);
+  background: var(--surface-1);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rb-tab:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.rb-tab.active {
+  background: var(--brand);
+  color: var(--ink);
+  border-color: var(--brand);
+}
+
+/* Empty state */
+.rb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.rb-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.rb-empty p {
+  font-size: 15px;
+  color: var(--ink-subtle);
+}
+
+/* Table */
+.rb-table-wrap {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.rb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.rb-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.rb-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.rb-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rb-table tr:hover td {
+  background: var(--surface-2);
+}
+
+.rb-entity-type-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--r-full);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.rb-entity-type-badge.agent { background: var(--brand-bg); color: var(--brand); }
+.rb-entity-type-badge.skill { background: var(--success-bg); color: var(--success); }
+.rb-entity-type-badge.knowledge { background: var(--warning-bg); color: var(--warning); }
+.rb-entity-type-badge.role { background: var(--warning-bg); color: var(--warning); }
+.rb-entity-type-badge.department { background: var(--brand-bg); color: var(--brand-hover); }
+.rb-entity-type-badge.user { background: var(--danger-bg); color: var(--danger); }
+
+.rb-expire-tag {
+  font-size: 12px;
+  color: var(--ink-subtle);
+}
+
+.rb-expire-tag.urgent {
+  color: var(--danger);
+}
+
+.rb-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.rb-restore-btn,
+.rb-delete-btn {
+  padding: 5px 12px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--hairline);
+  background: transparent;
+}
+
+.rb-restore-btn {
+  color: var(--brand);
+}
+
+.rb-restore-btn:hover {
+  border-color: var(--brand);
+  background: var(--brand-bg);
+}
+
+.rb-delete-btn {
+  color: var(--danger);
+}
+
+.rb-delete-btn:hover {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.rb-restore-btn:disabled,
+.rb-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .rb-page {
+    padding: 20px 16px 40px;
+  }
+
+  .rb-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .rb-table-wrap {
+    overflow-x: auto;
+  }
+
+  .rb-table {
+    min-width: 600px;
+  }
+}

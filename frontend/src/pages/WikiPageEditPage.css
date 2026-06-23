@@ -1,0 +1,148 @@
+/* ===== Wiki Page Edit ===== */
+.wiki-edit-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+}
+
+.wiki-edit-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.wiki-edit-topbar h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.wiki-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wiki-type-selector {
+  display: flex;
+  gap: 6px;
+}
+
+.wiki-type-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wiki-type-btn:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.wiki-type-btn.active {
+  background: var(--brand-bg);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.wiki-tag-input-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  min-height: 38px;
+  align-items: center;
+}
+
+.wiki-tag-input-wrap input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: var(--ink);
+  flex: 1;
+  min-width: 100px;
+}
+
+.wiki-tag-input-wrap input::placeholder {
+  color: var(--ink-tertiary);
+}
+
+.wiki-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  font-size: 11px;
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.wiki-tag-chip button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.6;
+}
+
+.wiki-tag-chip button:hover {
+  opacity: 1;
+}
+
+.wiki-content-editor {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--surface-2);
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+  resize: vertical;
+  min-height: 300px;
+}
+
+.wiki-content-editor:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.wiki-char-count {
+  text-align: right;
+  font-size: 11px;
+  color: var(--ink-tertiary);
+  margin-top: 4px;
+}
+
+.wiki-edit-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+}
+
+@media (max-width: 640px) {
+  .wiki-edit-page { padding: 16px 16px 40px; }
+  .wiki-type-selector { flex-wrap: wrap; }
+  .wiki-content-editor { min-height: 200px; }
+}

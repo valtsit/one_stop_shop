@@ -9,10 +9,14 @@ import {
   fetchSettings,
   fetchModelsCatalog,
   fetchDepartments,
+  fetchSkills,
+  fetchKnowledges,
   type Agent,
   type ModelOption,
   type ModelInfo,
   type Department,
+  type Skill,
+  type Knowledge,
 } from '../services/api';
 import './AgentFormPage.css';
 
@@ -55,6 +59,8 @@ const defaultForm: AgentForm = {
   default_model: 'gpt-4o',
   default_provider: 'openai',
   department_id: '',
+  skills: [],
+  knowledge_ids: [],
 };
 
 export default function AgentFormPage() {
@@ -63,7 +69,6 @@ export default function AgentFormPage() {
   const isEdit = !!agentId;
 
   const [form, setForm] = useState<AgentForm>(defaultForm);
-  const [suggestionInput, setSuggestionInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
@@ -71,6 +76,8 @@ export default function AgentFormPage() {
     { value: 'general', label: '通用' },
   ]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [allSkills, setAllSkills] = useState<Skill[]>([]);
+  const [allKnowledges, setAllKnowledges] = useState<Knowledge[]>([]);
 
   useEffect(() => {
     fetchAgents()
@@ -86,6 +93,14 @@ export default function AgentFormPage() {
 
     fetchDepartments()
       .then((depts) => setDepartments(depts as Department[]))
+      .catch(() => {});
+
+    fetchSkills()
+      .then(setAllSkills)
+      .catch(() => {});
+
+    fetchKnowledges()
+      .then(setAllKnowledges)
       .catch(() => {});
 
     Promise.all([fetchSettings(), fetchModelsCatalog()])
@@ -122,15 +137,22 @@ export default function AgentFormPage() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const addSuggestion = () => {
-    const text = suggestionInput.trim();
-    if (!text || form.suggestions.length >= 4) return;
-    updateField('suggestions', [...form.suggestions, text]);
-    setSuggestionInput('');
+  const toggleSkill = (skillId: string) => {
+    setForm((prev) => ({
+      ...prev,
+      skills: prev.skills.includes(skillId)
+        ? prev.skills.filter((id) => id !== skillId)
+        : [...prev.skills, skillId],
+    }));
   };
 
-  const removeSuggestion = (idx: number) => {
-    updateField('suggestions', form.suggestions.filter((_, i) => i !== idx));
+  const toggleKnowledge = (kbId: string) => {
+    setForm((prev) => ({
+      ...prev,
+      knowledge_ids: prev.knowledge_ids.includes(kbId)
+        ? prev.knowledge_ids.filter((id) => id !== kbId)
+        : [...prev.knowledge_ids, kbId],
+    }));
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,33 +348,57 @@ export default function AgentFormPage() {
           </div>
 
           <div className="agent-form-field">
-            <label>建议卡片（最多 4 个）</label>
-            <div className="suggestions-editor">
-              {form.suggestions.map((s, i) => (
-                <div key={i} className="suggestion-tag">
-                  <span>{s}</span>
-                  <button type="button" onClick={() => removeSuggestion(i)}>×</button>
-                </div>
-              ))}
-              {form.suggestions.length < 4 && (
-                <div className="suggestion-input-wrap">
-                  <input
-                    type="text"
-                    value={suggestionInput}
-                    onChange={(e) => setSuggestionInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addSuggestion();
-                      }
-                    }}
-                    placeholder="输入建议文案，回车添加"
-                    maxLength={50}
-                  />
-                  <button type="button" onClick={addSuggestion} disabled={!suggestionInput.trim()}>添加</button>
-                </div>
-              )}
-            </div>
+            <label>加载 Skill</label>
+            {allSkills.length === 0 ? (
+              <div style={{ fontSize: 13, color: 'var(--text-tertiary)', padding: '8px 0' }}>
+                暂无可用 Skill，可前往 <a href="/skills" style={{ color: 'var(--color-primary)' }}>Skill 管理</a> 创建
+              </div>
+            ) : (
+              <div className="skill-selector">
+                {allSkills.map((skill) => (
+                  <label key={skill.id} className={`skill-option ${form.skills.includes(skill.id) ? 'selected' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={form.skills.includes(skill.id)}
+                      onChange={() => toggleSkill(skill.id)}
+                    />
+                    <div className="skill-option-info">
+                      <span className="skill-option-name">{skill.name}</span>
+                      {skill.description && (
+                        <span className="skill-option-desc">{skill.description}</span>
+                      )}
+                    </div>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="agent-form-field">
+            <label>关联知识库</label>
+            {allKnowledges.length === 0 ? (
+              <div style={{ fontSize: 13, color: 'var(--text-tertiary)', padding: '8px 0' }}>
+                暂无知识库条目，可前往 <a href="/knowledge" style={{ color: 'var(--color-primary)' }}>知识库管理</a> 创建
+              </div>
+            ) : (
+              <div className="skill-selector">
+                {allKnowledges.map((kb) => (
+                  <label key={kb.id} className={`skill-option ${form.knowledge_ids.includes(kb.id) ? 'selected' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={form.knowledge_ids.includes(kb.id)}
+                      onChange={() => toggleKnowledge(kb.id)}
+                    />
+                    <div className="skill-option-info">
+                      <span className="skill-option-name">{kb.title}</span>
+                      {kb.tags.length > 0 && (
+                        <span className="skill-option-desc">{kb.tags.join(', ')}</span>
+                      )}
+                    </div>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="agent-form-field">

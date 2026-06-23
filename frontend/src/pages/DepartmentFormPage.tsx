@@ -7,11 +7,13 @@ import {
   updateDepartment,
   type Department,
 } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import './DepartmentFormPage.css';
 
 type DepartmentForm = Omit<Department, 'id' | 'created_at' | 'updated_at'>;
 
 export default function DepartmentFormPage() {
+  const { toast } = useToast();
   const { deptId } = useParams();
   const isEdit = !!deptId;
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ export default function DepartmentFormPage() {
           sort_order: dept.sort_order,
         });
       })
-      .catch(() => alert('获取部门详情失败'))
+      .catch(() => toast('获取部门详情失败', 'error'))
       .finally(() => setLoading(false));
   }, [isEdit, deptId]);
 
@@ -63,7 +65,7 @@ export default function DepartmentFormPage() {
       }
       navigate('/departments');
     } catch {
-      alert(isEdit ? '更新失败' : '创建失败');
+      toast(isEdit ? '更新失败' : '创建失败', 'error');
     } finally {
       setSaving(false);
     }

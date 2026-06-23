@@ -1,0 +1,470 @@
+/* ===== Knowledge Form Page ===== */
+.kb-form-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+}
+
+.kb-form-header {
+  margin-bottom: 32px;
+}
+
+.kb-form-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.kb-form-header p {
+  font-size: 14px;
+  color: var(--ink-subtle);
+}
+
+/* Form Card */
+.kb-form-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.kb-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kb-form-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.kb-form-field input,
+.kb-form-field textarea {
+  padding: 9px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface-1);
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.kb-form-field input:focus,
+.kb-form-field textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.kb-form-field textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.kb-form-field input::placeholder,
+.kb-form-field textarea::placeholder {
+  color: var(--ink-tertiary);
+}
+
+.kb-readonly-field {
+  padding: 8px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface-2);
+  line-height: 1.6;
+}
+
+.kb-col-readonly {
+  display: block;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* Tags */
+.kb-tags-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.kb-form-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  font-size: 13px;
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.kb-form-tag button {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  color: var(--brand);
+}
+
+.kb-form-tag button:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.kb-tag-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.kb-tag-input-row input {
+  width: 140px;
+  padding: 6px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface-1);
+}
+
+.kb-tag-input-row input:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.kb-tag-add-btn {
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  background: transparent;
+  transition: all 0.15s;
+}
+
+.kb-tag-add-btn:hover:not(:disabled) {
+  background: var(--brand-bg);
+}
+
+.kb-tag-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Actions */
+.kb-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.save-kb-btn {
+  padding: 10px 28px;
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--brand);
+  color: #fff;
+  transition: all 0.15s;
+}
+
+.save-kb-btn:hover:not(:disabled) {
+  background: var(--brand-hover);
+}
+
+.save-kb-btn:disabled {
+  background: var(--surface-3);
+  color: var(--ink-tertiary);
+  cursor: not-allowed;
+}
+
+/* Format Toggle */
+.kb-format-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.kb-format-btn {
+  padding: 6px 16px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--hairline);
+  background: var(--surface-2);
+  color: var(--ink-muted);
+  transition: all 0.15s;
+}
+
+.kb-format-btn.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.kb-format-btn:hover:not(.active) {
+  background: var(--surface-3);
+  border-color: var(--hairline-strong);
+}
+
+/* Table Editor */
+.kb-table-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kb-table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+}
+
+.kb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.kb-table th,
+.kb-table td {
+  border: 1px solid var(--hairline);
+  padding: 0;
+  min-width: 120px;
+}
+
+.kb-table th {
+  background: var(--surface-2);
+  position: relative;
+}
+
+.kb-col-input {
+  width: 100%;
+  padding: 8px 28px 8px 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.kb-col-input:focus {
+  outline: none;
+  background: var(--surface-1);
+}
+
+.kb-col-remove {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  color: var(--ink-subtle);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.kb-table th:hover .kb-col-remove {
+  opacity: 1;
+}
+
+.kb-col-remove:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.kb-col-add-cell {
+  min-width: 140px;
+  background: var(--surface-1);
+}
+
+.kb-add-col-wrap {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 6px;
+}
+
+.kb-col-name-input {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--surface-1);
+  min-width: 0;
+}
+
+.kb-col-name-input:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.kb-add-col-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  font-size: 16px;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.kb-add-col-btn:hover {
+  background: var(--brand-bg);
+}
+
+.kb-cell-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.kb-cell-input:focus {
+  outline: none;
+  background: var(--brand-bg);
+}
+
+.kb-row-actions {
+  min-width: 36px;
+  width: 36px;
+  text-align: center;
+}
+
+.kb-row-remove {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  color: var(--ink-subtle);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.kb-table tr:hover .kb-row-remove {
+  opacity: 1;
+}
+
+.kb-row-remove:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.kb-add-row-btn {
+  padding: 6px 14px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--brand);
+  border: 1px dashed var(--brand);
+  background: transparent;
+  transition: all 0.15s;
+}
+
+.kb-add-row-btn:hover {
+  background: var(--brand-bg);
+}
+
+/* Skip Review Toggle */
+.kb-skip-review-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kb-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.kb-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.kb-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--surface-3);
+  border-radius: 11px;
+  transition: background 0.2s;
+}
+
+.kb-switch-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.kb-switch input:checked + .kb-switch-slider {
+  background: var(--brand);
+}
+
+.kb-switch input:checked + .kb-switch-slider::before {
+  transform: translateX(18px);
+}
+
+.kb-switch-label {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.kb-field-hint {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .kb-form-page {
+    padding: 24px 16px 48px;
+  }
+
+  .kb-form-card {
+    padding: 16px;
+  }
+}

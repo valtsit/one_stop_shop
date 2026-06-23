@@ -1,0 +1,11 @@
+node_modules
+.git
+.gitignore
+*.md
+*.bat
+*.ps1
+__pycache__
+venv
+.env
+data
+uploads

@@ -8,20 +8,21 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   gap: 16px;
 }
 
 .dept-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 4px;
 }
 
 .dept-subtitle {
-  font-size: 14px;
-  color: var(--text-tertiary);
+  font-size: 13px;
+  color: var(--ink-subtle);
   margin: 0;
 }
 
@@ -29,32 +30,32 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 18px;
+  padding: 8px 16px;
   border: none;
-  border-radius: var(--radius-md);
-  background: var(--color-primary);
-  color: #fff;
+  border-radius: var(--r-sm);
+  background: var(--brand);
+  color: var(--ink);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.2s;
+  transition: background 0.15s;
 }
 
 .dept-create-btn:hover {
-  opacity: 0.9;
+  background: var(--brand-hover);
 }
 
 .dept-create-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .dept-empty {
   text-align: center;
   padding: 60px 20px;
-  color: var(--text-tertiary);
-  font-size: 15px;
+  color: var(--ink-subtle);
+  font-size: 14px;
 }
 
 .dept-empty p {
@@ -64,7 +65,7 @@
 .dept-tree {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .dept-tree-node {
@@ -74,45 +75,45 @@
 .dept-tree-children {
   margin-top: 6px;
   padding-left: 20px;
-  border-left: 2px solid var(--border-color);
+  border-left: 2px solid var(--hairline);
 }
 
 .dept-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  transition: border-color 0.2s;
+  padding: 12px 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  transition: border-color 0.15s;
 }
 
 .dept-card:hover {
-  border-color: var(--color-primary);
+  border-color: var(--hairline-strong);
 }
 
 .dept-card-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
 .dept-card-icon {
-  font-size: 20px;
+  font-size: 18px;
   flex-shrink: 0;
 }
 
 .dept-card-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
 }
 
 .dept-card-desc {
-  font-size: 13px;
-  color: var(--text-tertiary);
+  font-size: 12px;
+  color: var(--ink-tertiary);
   margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -123,7 +124,7 @@
 .dept-card-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -131,28 +132,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--r-xs);
   background: transparent;
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   text-decoration: none;
 }
 
 .dept-action-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .dept-action-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: var(--surface-2);
+  color: var(--ink);
 }
 
 .dept-action-delete:hover {
-  color: #ef4444;
-  background: #ef444418;
+  color: var(--danger);
+  background: var(--danger-bg);
 }

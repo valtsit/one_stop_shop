@@ -1,0 +1,135 @@
+/* Shared wiki modal and form styles */
+.wiki-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 24px;
+  animation: wiki-fade-in 0.15s ease;
+}
+
+@keyframes wiki-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.wiki-modal {
+  background: var(--surface-1); border: 1px solid var(--hairline);
+  border-radius: var(--r-lg); width: 100%; max-width: 480px;
+  animation: wiki-modal-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes wiki-modal-in {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.wiki-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px; border-bottom: 1px solid var(--hairline);
+}
+.wiki-modal-header h2 { font-size: 16px; font-weight: 600; color: var(--ink); margin: 0; }
+.wiki-modal-close {
+  background: none; border: none; font-size: 20px; color: var(--ink-tertiary);
+  cursor: pointer; padding: 2px 6px; border-radius: var(--r-xs); line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.wiki-modal-close:hover { color: var(--ink); background: var(--surface-2); }
+
+.wiki-modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; min-height: 0; }
+.wiki-modal-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 12px 20px 16px;
+}
+
+.wiki-form-group { margin-bottom: 14px; }
+.wiki-form-group label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--ink-muted); margin-bottom: 6px;
+}
+.wiki-form-group input,
+.wiki-form-group textarea {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--hairline);
+  border-radius: var(--r-sm); font-size: 13px; color: var(--ink);
+  background: var(--surface-2); transition: border-color 0.15s; font-family: inherit;
+}
+.wiki-form-group input:focus,
+.wiki-form-group textarea:focus { outline: none; border-color: var(--brand); }
+
+.wiki-btn-primary {
+  padding: 8px 20px; border: none; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500; background: var(--brand);
+  color: var(--ink); cursor: pointer; transition: background 0.15s;
+}
+.wiki-btn-primary:hover { background: var(--brand-hover); }
+.wiki-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.wiki-btn-secondary {
+  padding: 8px 20px; border: 1px solid var(--hairline); border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500; background: transparent;
+  color: var(--ink-muted); cursor: pointer; transition: all 0.15s;
+}
+.wiki-btn-secondary:hover { border-color: var(--hairline-strong); color: var(--ink); }
+
+/* Toast notifications */
+.toast-container {
+  position: fixed; top: 20px; right: 20px; z-index: 2000;
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  padding: 10px 16px; border-radius: var(--r-md); font-size: 13px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: auto; max-width: 360px;
+}
+.toast-error { background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.2); }
+.toast-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border-color: rgba(34, 197, 94, 0.2); }
+.toast-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.2); }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Spinner */
+.wiki-spinner {
+  display: inline-block; width: 18px; height: 18px;
+  border: 2px solid var(--hairline); border-top-color: var(--brand);
+  border-radius: 50%; animation: wiki-spin 0.6s linear infinite;
+}
+@keyframes wiki-spin { to { transform: rotate(360deg); } }
+
+.wiki-loading {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 48px 20px; color: var(--ink-subtle); font-size: 13px;
+}
+.wiki-loading .wiki-spinner { width: 22px; height: 22px; border-width: 2.5px; }
+
+/* Confirm dialog */
+.confirm-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1500; padding: 24px;
+  animation: wiki-fade-in 0.15s ease;
+}
+.confirm-dialog {
+  background: var(--surface-1); border: 1px solid var(--hairline);
+  border-radius: var(--r-lg); width: 100%; max-width: 400px;
+  animation: wiki-modal-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.confirm-body {
+  padding: 20px 24px; font-size: 14px; color: var(--ink); line-height: 1.6;
+}
+.confirm-actions {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 0 24px 20px;
+}
+.confirm-btn {
+  padding: 7px 20px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; border: none;
+}
+.confirm-cancel {
+  background: var(--surface-2); color: var(--ink-muted); border: 1px solid var(--hairline);
+}
+.confirm-cancel:hover { color: var(--ink); border-color: var(--hairline-strong); }
+.confirm-ok {
+  background: var(--brand); color: var(--ink);
+}
+.confirm-ok:hover { background: var(--brand-hover); }

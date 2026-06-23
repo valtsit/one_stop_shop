@@ -1,14 +1,15 @@
 .department-form-page {
   max-width: 600px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 40px 24px 72px;
 }
 
 .dept-form-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 28px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 32px;
 }
 
 .dept-form {
@@ -26,21 +27,21 @@
 .dept-form-field label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
 }
 
 .dept-form-field input,
 .dept-form-field textarea,
 .dept-form-field select {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-input);
-  color: var(--text-primary);
+  padding: 9px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+  color: var(--ink);
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
   box-sizing: border-box;
   font-family: inherit;
 }
@@ -48,12 +49,12 @@
 .dept-form-field input:focus,
 .dept-form-field textarea:focus,
 .dept-form-field select:focus {
-  border-color: var(--color-primary);
+  border-color: var(--brand);
 }
 
 .dept-form-field input::placeholder,
 .dept-form-field textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
 }
 
 .dept-form-field textarea {
@@ -74,37 +75,38 @@
 
 .dept-form-cancel {
   padding: 10px 24px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text-secondary);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--ink-muted);
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .dept-form-cancel:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
 }
 
 .dept-form-submit {
   padding: 10px 24px;
   border: none;
-  border-radius: var(--radius-md);
-  background: var(--color-primary);
+  border-radius: var(--r-md);
+  background: var(--brand);
   color: #fff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background 0.15s;
 }
 
 .dept-form-submit:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--brand-hover);
 }
 
 .dept-form-submit:disabled {
-  opacity: 0.5;
+  background: var(--surface-3);
+  color: var(--ink-tertiary);
   cursor: not-allowed;
 }

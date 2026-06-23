@@ -9,6 +9,7 @@ import {
   type ModelOption,
   type ModelInfo,
 } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import './HomePage.css';
 
 const CATEGORY_LABELS: Record<string, { icon: string; name: string }> = {
@@ -37,13 +38,13 @@ interface UploadedFile {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [allModels, setAllModels] = useState<ModelOption[]>([]);
   const [input, setInput] = useState('');
   const [selectedModel, setSelectedModel] = useState<ModelOption | null>(null);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
-  const [toasts, setToasts] = useState<{ id: number; msg: string; type: string }[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -84,12 +85,6 @@ export default function HomePage() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const addToast = (msg: string, type = 'error') => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, msg, type }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3000);
-  };
-
   const handleSend = () => {
     if (!input.trim()) return;
     let message = input.trim();
@@ -120,7 +115,7 @@ export default function HomePage() {
         const result = await uploadFile(file);
         setFiles((prev) => [...prev, { filename: result.filename, path: result.path }]);
       } catch (err: unknown) {
-        addToast(err instanceof Error ? err.message : '上传失败');
+        toast(err instanceof Error ? err.message : '上传失败', 'error');
       }
     }
     e.target.value = '';
@@ -149,9 +144,17 @@ export default function HomePage() {
 
   return (
     <div className="content-area">
+      {/* Ambient background orbs */}
+      <div className="home-ambient">
+        <div className="home-ambient-orb home-ambient-orb--gold" />
+        <div className="home-ambient-orb home-ambient-orb--violet" />
+        <div className="home-ambient-orb home-ambient-orb--rose" />
+      </div>
+
       <div className="home-page">
-        <p className="hero-greeting">嗨，智能生活，触手可及</p>
+        <p className="hero-greeting">AI 电商智能平台</p>
         <h1 className="hero-title">需要我为你做些什么？</h1>
+        <p className="hero-subtitle">30+ 智能工具，覆盖电商运营全链路，让效率触手可及</p>
 
         <div className="input-card">
           <textarea
@@ -268,12 +271,16 @@ export default function HomePage() {
           <div className="section-header">
             <h2 className="section-title">热门应用</h2>
           </div>
-          {categoryOrder.map((cat) => {
+          {categoryOrder.map((cat, ci) => {
             const catTools = grouped[cat];
             if (!catTools?.length) return null;
             const meta = CATEGORY_LABELS[cat] || { icon: '📁', name: cat };
             return (
-              <div key={cat} className="category-group">
+              <div
+                key={cat}
+                className="category-group"
+                style={{ opacity: 0, animation: `hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${0.8 + ci * 0.1}s forwards` }}
+              >
                 <div className="category-header">
                   <span className="category-icon">{meta.icon}</span>
                   <span className="category-name">{meta.name}</span>
@@ -307,14 +314,6 @@ export default function HomePage() {
             );
           })}
         </div>
-      </div>
-
-      <div className="toast-container">
-        {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type}`}>
-            {t.msg}
-          </div>
-        ))}
       </div>
     </div>
   );

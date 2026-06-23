@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import AsyncIterator
-from ..models.schemas import ChatMessage, TokenUsage
+from ..models.schemas import TokenUsage
 
 
 # Token pricing per 1M tokens (USD) - approximate values
@@ -29,17 +29,33 @@ def estimate_cost(model: str, prompt_tokens: int, completion_tokens: int) -> flo
     return round(input_cost + output_cost, 6)
 
 
+def strip_images_from_messages(api_messages: list[dict]) -> list[dict]:
+    """Remove image content from messages — keep only text."""
+    cleaned = []
+    for msg in api_messages:
+        content = msg.get("content")
+        if isinstance(content, list):
+            text_parts = [p for p in content if p.get("type") == "text"]
+            if text_parts:
+                cleaned.append({"role": msg["role"], "content": "\n".join(p["text"] for p in text_parts)})
+        else:
+            cleaned.append(msg)
+    return cleaned
+
+
 class BaseModelAdapter(ABC):
     """Abstract base for all AI model adapters."""
 
     @abstractmethod
     async def chat_stream(
         self,
-        messages: list[ChatMessage],
+        api_messages: list[dict],
         model: str,
         api_key: str,
         system_prompt: str | None = None,
         base_url: str | None = None,
-    ) -> AsyncIterator[tuple[str, TokenUsage | None]]:
-        """Yield (text_chunk, None) during streaming, then (\"\", final_usage) at end."""
+        extra_headers: dict[str, str] | None = None,
+    ) -> AsyncIterator[tuple[str, TokenUsage | None, bool]]:
+        """Yield (text_chunk, None, False) during streaming, then ("", final_usage, False) at end.
+        For thinking/reasoning content: yield (thinking_text, None, True)."""
         ...

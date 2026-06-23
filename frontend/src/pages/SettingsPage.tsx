@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useHasPermission } from '../contexts/AuthContext';
 import {
   fetchSettings,
   saveSettings,
@@ -9,6 +10,7 @@ import {
   testModelConnection,
   type ModelInfo,
 } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import './SettingsPage.css';
 
 // Blank form for adding a custom model
@@ -19,9 +21,13 @@ const EMPTY_CUSTOM: Omit<ModelInfo, 'builtin' | 'id'> = {
   base_url: '',
   api_key: '',
   max_tokens: 4096,
+  headers: {},
 };
 
 export default function SettingsPage() {
+  const { toast, confirm } = useToast();
+  const hasPerm = useHasPermission();
+  const canUpdate = hasPerm('settings:update');
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [testing, setTesting] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<Record<string, { status: string; message: string }>>({});
@@ -30,6 +36,7 @@ export default function SettingsPage() {
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [customForm, setCustomForm] = useState({ ...EMPTY_CUSTOM });
+  const [headersText, setHeadersText] = useState('{}');
   const [saving, setSaving] = useState(false);
   const [memoryDir, setMemoryDir] = useState('./data/conversations');
   const [memoryDirSaving, setMemoryDirSaving] = useState(false);
@@ -54,6 +61,7 @@ export default function SettingsPage() {
         model: m.model,
         api_key: apiKey,
         base_url: m.base_url || undefined,
+        headers: m.headers || undefined,
       });
       setTestResult((prev) => ({ ...prev, [testKey]: result }));
     } catch {
@@ -66,6 +74,7 @@ export default function SettingsPage() {
   // Custom model CRUD
   const openAddForm = () => {
     setCustomForm({ ...EMPTY_CUSTOM });
+    setHeadersText('{}');
     setEditingId(null);
     setShowCustomForm(true);
   };
@@ -78,24 +87,34 @@ export default function SettingsPage() {
       base_url: m.base_url || '',
       api_key: m.api_key || '',
       max_tokens: m.max_tokens,
+      headers: m.headers || {},
     });
+    setHeadersText(m.headers && Object.keys(m.headers).length > 0 ? JSON.stringify(m.headers) : '{}');
     setEditingId(m.id || null);
     setShowCustomForm(true);
   };
 
   const handleSaveCustom = async () => {
     if (!customForm.model || !customForm.label || !customForm.api_key || !customForm.base_url) return;
+    let parsedHeaders = {};
+    try {
+      parsedHeaders = JSON.parse(headersText || '{}');
+    } catch {
+      toast('Headers JSON 格式不正确', 'error');
+      return;
+    }
     setSaving(true);
     try {
+      const payload = { ...customForm, headers: parsedHeaders };
       if (editingId) {
-        await updateCustomModel(editingId, customForm);
+        await updateCustomModel(editingId, payload);
       } else {
-        await addCustomModel(customForm);
+        await addCustomModel(payload);
       }
       setShowCustomForm(false);
       loadAll();
     } catch {
-      alert('保存失败');
+      toast('保存失败', 'error');
     } finally {
       setSaving(false);
     }
@@ -103,12 +122,12 @@ export default function SettingsPage() {
 
   const handleDeleteCustom = async (id: string) => {
     if (!id) return;
-    if (!confirm('确定删除该自定义模型？')) return;
+    if (!(await confirm('确定删除该自定义模型？'))) return;
     try {
       await deleteCustomModel(id);
       loadAll();
     } catch {
-      alert('删除失败');
+      toast('删除失败', 'error');
     }
   };
 
@@ -119,7 +138,7 @@ export default function SettingsPage() {
       s.memory_dir = memoryDir;
       await saveSettings(s);
     } catch {
-      alert('保存失败');
+      toast('保存失败', 'error');
     } finally {
       setMemoryDirSaving(false);
     }
@@ -137,7 +156,7 @@ export default function SettingsPage() {
         <div className="settings-section">
           <div className="settings-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>自定义模型</span>
-            <button className="add-model-btn" onClick={openAddForm}>+ 添加模型</button>
+            {canUpdate && <button className="add-model-btn" onClick={openAddForm}>+ 添加模型</button>}
           </div>
           <div className="settings-section-desc">
             添加第三方模型或自建模型，支持任何兼容 OpenAI / Claude API 格式的服务
@@ -145,7 +164,7 @@ export default function SettingsPage() {
 
           {/* Custom model list */}
           {models.length === 0 && !showCustomForm && (
-            <div className="empty-custom">暂无自定义模型，点击上方"添加模型"开始</div>
+            <div className="empty-custom">暂无自定义模型{canUpdate ? '，点击上方"添加模型"开始' : ''}</div>
           )}
 
           {models.map((m) => {
@@ -172,8 +191,8 @@ export default function SettingsPage() {
                             ? '✗ 失败'
                             : '测试'}
                     </button>
-                    <button className="edit-btn" onClick={() => openEditForm(m)}>编辑</button>
-                    <button className="delete-btn" onClick={() => handleDeleteCustom(m.id!)}>删除</button>
+                    {canUpdate && <button className="edit-btn" onClick={() => openEditForm(m)}>编辑</button>}
+                    {canUpdate && <button className="delete-btn" onClick={() => handleDeleteCustom(m.id!)}>删除</button>}
                   </div>
                 </div>
                 {result && (
@@ -186,7 +205,7 @@ export default function SettingsPage() {
           })}
 
           {/* Add/Edit form */}
-          {showCustomForm && (
+          {showCustomForm && canUpdate && (
             <div className="custom-form-card">
               <div className="custom-form-title">{editingId ? '编辑模型' : '添加模型'}</div>
               <div className="field-group" style={{ marginBottom: 12 }}>
@@ -251,6 +270,17 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+              <div className="field-group" style={{ marginBottom: 12 }}>
+                <div className="field" style={{ flex: 1 }}>
+                  <label>自定义 Headers (JSON)</label>
+                  <input
+                    type="text"
+                    placeholder='如：{"User-Agent": "claude-code/1.0"}'
+                    value={headersText}
+                    onChange={(e) => setHeadersText(e.target.value)}
+                  />
+                </div>
+              </div>
               <div className="custom-form-actions">
                 <button
                   className="save-btn"
@@ -287,13 +317,15 @@ export default function SettingsPage() {
               />
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <button
-                className="save-btn"
-                onClick={handleSaveMemoryDir}
-                disabled={memoryDirSaving}
-              >
-                {memoryDirSaving ? '保存中...' : '保存'}
-              </button>
+              {canUpdate && (
+                <button
+                  className="save-btn"
+                  onClick={handleSaveMemoryDir}
+                  disabled={memoryDirSaving}
+                >
+                  {memoryDirSaving ? '保存中...' : '保存'}
+                </button>
+              )}
             </div>
           </div>
         </div>

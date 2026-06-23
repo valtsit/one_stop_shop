@@ -1,0 +1,155 @@
+/* ===== Wiki Import Modal ===== */
+.wiki-import-modal {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  width: 100%;
+  max-width: 560px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: wiki-modal-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wiki-import-modes {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.wiki-import-mode {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.wiki-import-mode:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.wiki-import-mode.active {
+  background: var(--brand-bg);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.wiki-import-mode:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wiki-source-select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.wiki-source-option {
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wiki-source-option:hover {
+  border-color: var(--brand);
+}
+
+.wiki-source-option.selected {
+  background: var(--brand-bg);
+  border-color: var(--brand);
+}
+
+.wiki-source-option-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.wiki-source-option-meta {
+  font-size: 11px;
+  color: var(--ink-tertiary);
+}
+
+.wiki-import-error {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.wiki-import-result {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.wiki-import-success {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--success);
+  margin-bottom: 8px;
+}
+
+.wiki-import-summary {
+  font-size: 13px;
+  color: var(--ink-subtle);
+  margin: 0 0 12px;
+}
+
+.wiki-import-stats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+}
+
+.wiki-import-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.wiki-import-page-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+}
+
+.wiki-import-page-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.wiki-import-page-type {
+  font-size: 11px;
+  color: var(--ink-tertiary);
+}
+
+@media (max-width: 640px) {
+  .wiki-import-modal { max-width: 100%; margin: 0 8px; max-height: 90vh; }
+  .wiki-source-select { max-height: 150px; }
+}

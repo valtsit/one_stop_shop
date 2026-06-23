@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchUsers, deleteUser, resetUserPassword, fetchRoles, fetchDepartments, type User, type Role, type Department } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import './UserManagePage.css';
 
 export default function UserManagePage() {
@@ -10,6 +11,7 @@ export default function UserManagePage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { toast, confirm } = useToast();
 
   useEffect(() => {
     Promise.all([
@@ -23,13 +25,13 @@ export default function UserManagePage() {
   const getDeptName = (deptId: string) => departments.find((d) => d.id === deptId)?.name || deptId;
 
   const handleDelete = async (id: string, username: string) => {
-    if (!confirm(`确定要删除用户"${username}"吗？`)) return;
+    if (!(await confirm(`确定要删除用户"${username}"吗？可在回收站中恢复。`))) return;
     setDeleting(id);
     try {
       await deleteUser(id);
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : '删除失败');
+      toast(e instanceof Error ? e.message : '删除失败', 'error');
     } finally {
       setDeleting(null);
     }
@@ -40,9 +42,9 @@ export default function UserManagePage() {
     if (!newPwd) return;
     try {
       await resetUserPassword(id, newPwd);
-      alert('密码已重置');
+      toast('密码已重置', 'success');
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : '重置密码失败');
+      toast(e instanceof Error ? e.message : '重置密码失败', 'error');
     }
   };
 

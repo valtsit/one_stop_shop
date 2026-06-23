@@ -1,23 +1,25 @@
 .role-form-page {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 40px 24px 72px;
 }
 
 .role-form-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 28px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 32px;
 }
 
 .role-form-error {
   padding: 10px 14px;
   margin-bottom: 20px;
-  border-radius: var(--radius-md);
-  background: var(--color-danger)14;
-  color: var(--color-danger);
+  border-radius: var(--r-md);
+  background: var(--danger-bg);
+  color: var(--danger);
   font-size: 14px;
+  border: 1px solid var(--danger);
 }
 
 .role-form {
@@ -32,69 +34,98 @@
   gap: 6px;
 }
 
-.role-form-field label {
+.role-form-field > label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
 }
 
 .role-form-field input[type="text"] {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-input);
-  color: var(--text-primary);
+  padding: 9px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+  color: var(--ink);
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
   box-sizing: border-box;
   font-family: inherit;
 }
 
+.role-form-field input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .role-form-field input:focus {
-  border-color: var(--color-primary);
+  border-color: var(--brand);
 }
 
 .role-form-field input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
 }
 
+/* Permission list */
 .role-perm-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-input);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surface-1);
+}
+
+.role-perm-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--hairline);
+  gap: 16px;
+}
+
+.role-perm-row:last-child {
+  border-bottom: none;
+}
+
+.role-perm-module {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.role-perm-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .role-perm-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   cursor: pointer;
-  padding: 6px 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  white-space: nowrap;
 }
 
 .role-perm-item input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--color-primary);
+  width: 15px;
+  height: 15px;
+  accent-color: var(--brand);
   cursor: pointer;
-  flex-shrink: 0;
 }
 
-.role-perm-item span {
-  font-size: 14px;
-  color: var(--text-primary);
-}
-
-.role-perm-item code {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  margin-left: auto;
+.role-perm-all {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--hairline);
+  color: var(--ink-subtle);
 }
 
 .role-form-actions {
@@ -106,37 +137,38 @@
 
 .role-form-cancel {
   padding: 10px 24px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text-secondary);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--ink-muted);
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .role-form-cancel:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
 }
 
 .role-form-submit {
   padding: 10px 24px;
   border: none;
-  border-radius: var(--radius-md);
-  background: var(--color-primary);
+  border-radius: var(--r-md);
+  background: var(--brand);
   color: #fff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background 0.15s;
 }
 
 .role-form-submit:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--brand-hover);
 }
 
 .role-form-submit:disabled {
-  opacity: 0.5;
+  background: var(--surface-3);
+  color: var(--ink-tertiary);
   cursor: not-allowed;
 }

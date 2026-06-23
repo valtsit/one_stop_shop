@@ -1,27 +1,17 @@
-import json
-from pathlib import Path
-
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.auth import create_access_token, get_current_user, verify_password
+from ..core.database import get_db
+from ..core.crud import get_user_by_username
 from ..models.schemas import LoginRequest, LoginResponse, UserResponse
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
-USERS_FILE = DATA_DIR / "users.json"
-
 
 @router.post("/login", response_model=LoginResponse)
-async def login(req: LoginRequest):
-    if not USERS_FILE.exists():
-        raise HTTPException(status_code=500, detail="用户数据不存在")
-    users = json.loads(USERS_FILE.read_text(encoding="utf-8"))
-    user = None
-    for u in users.values():
-        if u["username"] == req.username:
-            user = u
-            break
+async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
+    user = await get_user_by_username(db, req.username)
     if not user:
         raise HTTPException(status_code=401, detail="用户名或密码错误")
     if not verify_password(req.password, user["password_hash"]):

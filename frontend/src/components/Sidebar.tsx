@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { fetchAgents, type Agent } from '../services/api';
+import { fetchAgents, fetchPendingReviewCount, type Agent } from '../services/api';
 
 interface SidebarUser {
   role_id: string;
+  permissions?: string[];
 }
 
 interface SidebarProps {
@@ -29,12 +30,15 @@ const ChevronIcon = () => (
 );
 
 export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
-  const isAdmin = user?.role_id === 'role_super_admin' || user?.role_id === 'role_admin';
+  const perms = user?.permissions || [];
+  const hasPerm = (p: string) => perms.includes('*') || perms.includes(p);
+  const isAdmin = hasPerm('user:read');
   const [agents, setAgents] = useState<Agent[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [toolsCollapsed, setToolsCollapsed] = useState(false);
   const [historyCollapsed, setHistoryCollapsed] = useState(false);
+  const [pendingReviewCount, setPendingReviewCount] = useState(0);
   const location = useLocation();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +51,17 @@ export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
       searchInputRef.current?.focus();
     }
   }, [searchOpen]);
+
+  useEffect(() => {
+    if (!hasPerm('knowledge:review')) return;
+    let cancelled = false;
+    const load = () => {
+      fetchPendingReviewCount().then((c) => { if (!cancelled) setPendingReviewCount(c); }).catch(() => {});
+    };
+    load();
+    const timer = setInterval(load, 30000);
+    return () => { cancelled = true; clearInterval(timer); };
+  }, [hasPerm('knowledge:review')]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -234,8 +249,57 @@ export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
             </svg>
             <span>智能体管理</span>
           </Link>
-          {isAdmin && (
-            <>
+          {hasPerm('skill:read') && (
+            <Link
+              to="/skills"
+              className="sidebar-footer-btn"
+              onClick={() => collapsed && onToggle()}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              <span>Skill 管理</span>
+            </Link>
+          )}
+          {hasPerm('knowledge:review') && (
+            <Link
+              to="/knowledge/review"
+              className="sidebar-footer-btn"
+              onClick={() => collapsed && onToggle()}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+              <span>知识库审核</span>
+              {pendingReviewCount > 0 && (
+                <span className="review-badge">{pendingReviewCount > 99 ? '99+' : pendingReviewCount}</span>
+              )}
+            </Link>
+          )}
+          <Link
+            to="/knowledge"
+            className="sidebar-footer-btn"
+            onClick={() => collapsed && onToggle()}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            <span>知识库</span>
+          </Link>
+          <Link
+            to="/wiki"
+            className="sidebar-footer-btn"
+            onClick={() => collapsed && onToggle()}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+            <span>Wiki 知识库</span>
+          </Link>
+          {hasPerm('department:read') && (
               <Link
                 to="/departments"
                 className="sidebar-footer-btn"
@@ -249,6 +313,8 @@ export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
                 </svg>
                 <span>部门管理</span>
               </Link>
+          )}
+          {isAdmin && (
               <Link
                 to="/users"
                 className="sidebar-footer-btn"
@@ -260,6 +326,8 @@ export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
                 </svg>
                 <span>用户管理</span>
               </Link>
+          )}
+          {isAdmin && (
               <Link
                 to="/roles"
                 className="sidebar-footer-btn"
@@ -270,6 +338,23 @@ export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
                 </svg>
                 <span>角色管理</span>
               </Link>
+          )}
+          {isAdmin && (
+              <Link
+                to="/recycle-bin"
+                className="sidebar-footer-btn"
+                onClick={() => collapsed && onToggle()}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  <line x1="10" y1="11" x2="10" y2="17" />
+                  <line x1="14" y1="11" x2="14" y2="17" />
+                </svg>
+                <span>回收站</span>
+              </Link>
+          )}
+          {isAdmin && (
               <Link
                 to="/admin/conversations"
                 className="sidebar-footer-btn"
@@ -280,7 +365,6 @@ export default function Sidebar({ collapsed, onToggle, user }: SidebarProps) {
                 </svg>
                 <span>聊天记录管理</span>
               </Link>
-            </>
           )}
           <Link
             to="/profile"

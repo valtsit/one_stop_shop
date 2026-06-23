@@ -8,20 +8,21 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   gap: 16px;
 }
 
 .role-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 4px;
 }
 
 .role-subtitle {
-  font-size: 14px;
-  color: var(--text-tertiary);
+  font-size: 13px;
+  color: var(--ink-subtle);
   margin: 0;
 }
 
@@ -29,32 +30,32 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 18px;
+  padding: 8px 16px;
   border: none;
-  border-radius: var(--radius-md);
-  background: var(--color-primary);
-  color: #fff;
+  border-radius: var(--r-sm);
+  background: var(--brand);
+  color: var(--ink);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.2s;
+  transition: background 0.15s;
 }
 
 .role-create-btn:hover {
-  opacity: 0.9;
+  background: var(--brand-hover);
 }
 
 .role-create-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .role-empty {
   text-align: center;
   padding: 60px 20px;
-  color: var(--text-tertiary);
-  font-size: 15px;
+  color: var(--ink-subtle);
+  font-size: 14px;
 }
 
 .role-empty p {
@@ -64,22 +65,22 @@
 .role-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .role-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  transition: border-color 0.2s;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 16px;
+  transition: border-color 0.15s;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .role-card:hover {
-  border-color: var(--color-primary);
+  border-color: var(--hairline-strong);
 }
 
 .role-card-header {
@@ -91,74 +92,74 @@
 .role-card-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .role-card-icon {
-  font-size: 24px;
+  font-size: 20px;
   flex-shrink: 0;
 }
 
 .role-card-name {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--ink);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .role-builtin-badge {
   display: inline-block;
-  padding: 1px 8px;
-  border-radius: var(--radius-full);
-  background: var(--color-warning)18;
-  color: var(--color-warning);
+  padding: 1px 7px;
+  border-radius: var(--r-full);
+  background: var(--warning-bg);
+  color: var(--warning);
   font-size: 11px;
   font-weight: 500;
 }
 
 .role-card-desc {
   font-size: 13px;
-  color: var(--text-tertiary);
-  margin-top: 3px;
+  color: var(--ink-tertiary);
+  margin-top: 2px;
 }
 
 .role-card-perms {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .role-perm-tag {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary)14;
-  color: var(--color-primary);
-  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-size: 11px;
   font-weight: 500;
 }
 
 .role-card-actions {
   display: flex;
-  gap: 8px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border-light);
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--hairline);
 }
 
 .role-action-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  padding: 5px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   text-decoration: none;
 }
 
@@ -168,12 +169,12 @@
 }
 
 .role-action-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: var(--surface-2);
+  color: var(--ink);
 }
 
 .role-action-delete:hover {
-  color: #ef4444;
-  border-color: #ef444440;
-  background: #ef444418;
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-bg);
 }

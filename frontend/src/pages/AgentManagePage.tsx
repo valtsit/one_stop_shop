@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAgents, deleteAgent, type Agent } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useHasPermission } from '../contexts/AuthContext';
+import { useToast } from '../hooks/useToast';
 import './AgentManagePage.css';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -16,8 +17,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export default function AgentManagePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isAdmin = user?.role_id === 'role_super_admin' || user?.role_id === 'role_admin';
+  const hasPerm = useHasPermission();
+  const { confirm } = useToast();
+  const canCreate = hasPerm('agent:create');
+  const canUpdate = hasPerm('agent:update');
+  const canDelete = hasPerm('agent:delete');
   const [agents, setAgents] = useState<Agent[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -30,7 +34,7 @@ export default function AgentManagePage() {
   }, []);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`确定删除智能体"${name}"吗？`)) return;
+    if (!(await confirm(`确定删除智能体"${name}"吗？可在回收站中恢复。`))) return;
     setDeleting(id);
     try {
       await deleteAgent(id);
@@ -46,9 +50,9 @@ export default function AgentManagePage() {
         <div className="agent-manage-header">
           <div>
             <h1>智能体管理</h1>
-            <p>{isAdmin ? '创建和管理你的自定义智能体' : '查看可用的智能体'}</p>
+            <p>{canCreate ? '创建和管理你的自定义智能体' : '查看可用的智能体'}</p>
           </div>
-          {isAdmin && (
+          {canCreate && (
             <button
               className="create-agent-btn"
               type="button"
@@ -66,8 +70,8 @@ export default function AgentManagePage() {
         {agents.length === 0 ? (
           <div className="agent-empty">
             <div className="agent-empty-icon">🤖</div>
-            <p>{isAdmin ? '还没有创建任何智能体' : '暂无可用的智能体'}</p>
-            {isAdmin && (
+            <p>{canCreate ? '还没有创建任何智能体' : '暂无可用的智能体'}</p>
+            {canCreate && (
               <button className="create-agent-btn" type="button" onClick={() => navigate('/agents/create')}>
                 创建第一个智能体
               </button>
@@ -95,7 +99,7 @@ export default function AgentManagePage() {
                   </div>
                 )}
                 <div className="agent-card-actions">
-                  {isAdmin && (
+                  {canUpdate && (
                     <button
                       className="agent-action-btn edit"
                       type="button"
@@ -111,7 +115,7 @@ export default function AgentManagePage() {
                   >
                     对话
                   </button>
-                  {isAdmin && (
+                  {canDelete && (
                     <button
                       className="agent-action-btn delete"
                       type="button"
